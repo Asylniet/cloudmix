@@ -1,11 +1,10 @@
-import ChatHeader from "@/components/ChatHeader";
-import ChatInput from "@/components/ChatInput";
+import { Chat } from "@/components/Chat";
+import React from "react";
 
 export default function Home() {
   return (
     <main className="min-h-screen">
-      <ChatHeader />
-      <ChatInput />
+      <Chat />
     </main>
   );
 }

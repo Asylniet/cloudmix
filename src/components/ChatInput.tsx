@@ -7,10 +7,12 @@ import { useMutation } from "@tanstack/react-query";
 import { Message } from "@/lib/validators/message";
 import { MessageContext } from "@/context/messages";
 import { CornerDownLeftIcon, Loader2Icon } from "lucide-react";
+import { useToast } from "./ui/use-toast";
 
 type ChatInputProps = HTMLAttributes<HTMLDivElement>;
 
 const ChatInput: FC<ChatInputProps> = ({ className, ...props }) => {
+  const { toast } = useToast();
   const textareaRef = React.useRef<HTMLTextAreaElement>(null);
   const [input, setInput] = useState<string>("");
   const { addMessage, removeMessage, updateMessage, setIsMessagePending } =
@@ -64,6 +66,10 @@ const ChatInput: FC<ChatInputProps> = ({ className, ...props }) => {
       }, 10);
     },
     onError: (_, message) => {
+      toast({
+        title: "Something went wrong",
+        variant: "destructive",
+      });
       setInput(message.text);
       removeMessage(message.id);
       setTimeout(() => {

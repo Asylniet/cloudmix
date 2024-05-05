@@ -25,7 +25,8 @@ function getGoogleCredentials() {
 
 export const authOptions: NextAuthOptions = {
   adapter: UpstashRedisAdapter(redis),
-  debug: true,
+  debug: process.env.NODE_ENV === "development",
+  useSecureCookies: process.env.NODE_ENV !== "development",
   session: {
     strategy: "jwt",
   },

@@ -78,7 +78,13 @@ const ChatPage: FC<ChatPageProps> = async ({ params }) => {
           </div>
         </div>
       </div>
-      <Messages sessionId={session.user.id} initialMessages={initialMessages} />
+      <Messages
+        sessionImg={session.user.image}
+        sessionName={session.user.name}
+        chatPartner={chatPartner}
+        sessionId={session.user.id}
+        initialMessages={initialMessages}
+      />
       <ChatInput chatPartner={chatPartner} chatId={chatId} />
     </div>
   );

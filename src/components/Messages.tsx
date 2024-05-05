@@ -3,17 +3,36 @@
 import { cn } from "@/lib/utils";
 import { Message } from "@/lib/validators/message";
 import { FC, useRef, useState } from "react";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { getNameInitials } from "@/helpers/getNameInitials";
+import { User } from "@/lib/validators/user";
 
 type MessagesProps = {
   initialMessages: Message[];
   sessionId: string;
+  chatPartner: User;
+  sessionImg: string;
+  sessionName: string;
 };
 
-const Messages: FC<MessagesProps> = ({ initialMessages, sessionId }) => {
+const Messages: FC<MessagesProps> = ({
+  initialMessages,
+  sessionId,
+  sessionImg,
+  chatPartner,
+  sessionName,
+}) => {
   const [messages, setMessages] = useState<Message[]>(initialMessages);
   const scrollDownRef = useRef<HTMLDivElement>(null);
+  const formatTimestamp = (timestamp: number) => {
+    const date = new Date(timestamp);
+    return date.toLocaleTimeString("ru-ru", {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  };
   return (
-    <div className="flex flex-col-reverse flex-1 gap-4 scrollbar-thumb-blue p-3 scrollbar-thumb-rounded scrollbar-w-2 h-full overflow-y-auto scrollbar-track-blue-lighter scrolling-touch">
+    <div className="flex flex-col-reverse flex-1 gap-2 scrollbar-thumb-blue p-3 scrollbar-thumb-rounded scrollbar-w-2 h-full overflow-y-auto scrollbar-track-blue-lighter scrolling-touch">
       <div ref={scrollDownRef} />
       {messages.map((message, index) => {
         const isCurrentUser = message.senderId === sessionId;
@@ -47,11 +66,31 @@ const Messages: FC<MessagesProps> = ({ initialMessages, sessionId }) => {
                   })}
                 >
                   {message.text}{" "}
-                  <span className="ml-2 text-accent text-xs">
-                    {message.timestamp}
+                  <span
+                    className="ml-2 text-foreground text-xs"
+                    suppressHydrationWarning
+                  >
+                    {formatTimestamp(message.timestamp)}
                   </span>
                 </span>
               </div>
+              <Avatar
+                className={cn("relative w-6 h-6", {
+                  "order-2": isCurrentUser,
+                  "order-1": !isCurrentUser,
+                  invisible: hasNextMessageFromSameUser,
+                })}
+              >
+                <AvatarImage
+                  src={isCurrentUser ? sessionImg : chatPartner.image || ""}
+                  referrerPolicy="no-referrer"
+                />
+                <AvatarFallback>
+                  {getNameInitials(
+                    isCurrentUser ? sessionName : chatPartner.name
+                  )}
+                </AvatarFallback>
+              </Avatar>
             </div>
           </div>
         );

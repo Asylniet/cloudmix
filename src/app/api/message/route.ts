@@ -4,7 +4,7 @@ import {
   type OpenAIStreamPayload,
   OpenAIStream,
 } from "@/lib/openai-stream";
-import { MessageArraySchema } from "@/lib/validators/message";
+import { MessageArraySchema } from "@/lib/validators/gptMessage";
 
 export async function POST(req: Request) {
   const { messages } = await req.json();

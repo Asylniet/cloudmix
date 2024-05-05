@@ -11,6 +11,8 @@ import SignoutButton from "@/components/SignoutButton";
 import { fetchRedis } from "@/helpers/redis";
 import { User } from "@/lib/validators/user";
 import FriendRequestSidebarOptions from "@/components/FriendRequestsSidebarOptions";
+import { getFriendsByUserId } from "@/helpers/getFriendsByUserId";
+import SidebarChatList from "@/components/SidebarChatList";
 
 type LayoutProps = PropsWithChildren & {};
 
@@ -34,6 +36,8 @@ const Layout = async ({ children }: LayoutProps) => {
   const session = await getServerSession(authOptions);
   if (!session) notFound();
 
+  const friends = await getFriendsByUserId(session.user.id);
+
   const unseenRequestCount = (
     (await fetchRedis(
       "smembers",
@@ -44,12 +48,17 @@ const Layout = async ({ children }: LayoutProps) => {
   return (
     <div className="flex w-full h-screen">
       <div className="flex flex-col gap-y-5 border-accent bg-background px-6 border-r w-full max-w-xs h-full overflow-y-auto grow">
-        <div className="font-semibold text-accent text-xs leading-6">
-          Your Messages
-        </div>
+        {friends.length > 0 ? (
+          <div className="font-semibold text-accent text-xs leading-6">
+            Your Messages
+          </div>
+        ) : null}
 
         <nav className="flex flex-col flex-1">
           <ul role="list" className="flex flex-col flex-1 gap-y-7">
+            <li>
+              <SidebarChatList sessionId={session.user.id} friends={friends} />
+            </li>
             <li>
               <div className="font-semibold text-accent text-xs leading-6">
                 Overview

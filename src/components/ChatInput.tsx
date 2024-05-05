@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 import React, { FC, HTMLAttributes, useContext, useState } from "react";
 import TextareaAutoSize from "./TextareaAutoSize";
 import { useMutation } from "@tanstack/react-query";
-import { Message } from "@/lib/validators/message";
+import { GPTMessage } from "@/lib/validators/gptMessage";
 import { MessageContext } from "@/context/messages";
 import { CornerDownLeftIcon, Loader2Icon } from "lucide-react";
 import { useToast } from "./ui/use-toast";
@@ -20,7 +20,7 @@ const ChatInput: FC<ChatInputProps> = ({ className, ...props }) => {
 
   const { mutate: sendMessage, isPending } = useMutation({
     mutationKey: ["sendMessage"],
-    mutationFn: async (message: Message) => {
+    mutationFn: async (message: GPTMessage) => {
       const response = await fetch("/api/message", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -31,14 +31,14 @@ const ChatInput: FC<ChatInputProps> = ({ className, ...props }) => {
 
       return response.body;
     },
-    onMutate: (message: Message) => {
+    onMutate: (message: GPTMessage) => {
       addMessage(message);
     },
     onSuccess: async (stream) => {
       if (!stream) throw new Error("Stream not initialized");
 
       const id = Date.now().toString();
-      const responseMessage: Message = {
+      const responseMessage: GPTMessage = {
         id,
         isUserMessage: false,
         text: "",
@@ -90,7 +90,7 @@ const ChatInput: FC<ChatInputProps> = ({ className, ...props }) => {
           onKeyDown={(e) => {
             if (e.key === "Enter" && !e.shiftKey) {
               e.preventDefault();
-              const message: Message = {
+              const message: GPTMessage = {
                 id: Date.now().toString(),
                 isUserMessage: true,
                 text: input,

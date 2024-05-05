@@ -1,4 +1,4 @@
-import { Message } from "@/lib/validators/message";
+import { Message } from "@/lib/validators/gptMessage";
 import { ReactNode, createContext, useState } from "react";
 
 export const MessageContext = createContext<{

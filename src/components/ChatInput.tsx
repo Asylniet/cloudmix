@@ -1,123 +1,66 @@
 "use client";
 
-import { cn } from "@/lib/utils";
-import React, { FC, HTMLAttributes, useContext, useState } from "react";
-import TextareaAutoSize from "./TextareaAutoSize";
-import { useMutation } from "@tanstack/react-query";
-import { GPTMessage } from "@/lib/validators/gptMessage";
-import { MessageContext } from "@/context/messages";
-import { CornerDownLeftIcon, Loader2Icon } from "lucide-react";
+import { User } from "@/lib/validators/user";
+import axios from "axios";
+import { FC, useRef, useState } from "react";
+import TextareaAutosize from "react-textarea-autosize";
+import { Button } from "./ui/button";
 import { useToast } from "./ui/use-toast";
 
-type ChatInputProps = HTMLAttributes<HTMLDivElement>;
+interface ChatInputProps {
+  chatPartner: User;
+  chatId: string;
+}
 
-const ChatInput: FC<ChatInputProps> = ({ className, ...props }) => {
-  const { toast } = useToast();
-  const textareaRef = React.useRef<HTMLTextAreaElement>(null);
+const ChatInput: FC<ChatInputProps> = ({ chatPartner, chatId }) => {
+  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [input, setInput] = useState<string>("");
-  const { addMessage, removeMessage, updateMessage, setIsMessagePending } =
-    useContext(MessageContext);
+  const { toast } = useToast();
 
-  const { mutate: sendMessage, isPending } = useMutation({
-    mutationKey: ["sendMessage"],
-    mutationFn: async (message: GPTMessage) => {
-      const response = await fetch("/api/message", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages: [message] }),
-      });
+  const sendMessage = async () => {
+    if (!input) return;
+    setIsLoading(true);
 
-      if (!response.ok) throw new Error("Failed to send message");
-
-      return response.body;
-    },
-    onMutate: (message: GPTMessage) => {
-      addMessage(message);
-    },
-    onSuccess: async (stream) => {
-      if (!stream) throw new Error("Stream not initialized");
-
-      const id = Date.now().toString();
-      const responseMessage: GPTMessage = {
-        id,
-        isUserMessage: false,
-        text: "",
-      };
-
-      addMessage(responseMessage);
-      setIsMessagePending(true);
-
-      const reader = stream.getReader();
-      const decoder = new TextDecoder();
-      let done = false;
-
-      while (!done) {
-        const { value, done: doneReading } = await reader.read();
-        done = doneReading;
-        const chunkValue = decoder.decode(value);
-        updateMessage(id, (prev) => prev + chunkValue);
-      }
-
-      setIsMessagePending(false);
+    try {
+      await axios.post("/api/message/send", { text: input, chatId });
       setInput("");
-
-      setTimeout(() => {
-        textareaRef.current?.focus();
-      }, 10);
-    },
-    onError: (_, message) => {
+      textareaRef.current?.focus();
+    } catch {
       toast({
-        title: "Something went wrong",
+        title: "Something went wrong. Please try again later.",
         variant: "destructive",
       });
-      setInput(message.text);
-      removeMessage(message.id);
-      setTimeout(() => {
-        textareaRef.current?.focus();
-      }, 10);
-    },
-  });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
-    <div {...props} className={cn("border", className)}>
-      <div className="relative flex-1 mt-4 border-none rounded-lg overflow-hidden outline-none">
-        <TextareaAutoSize
+    <div className="border-accent mb-2 sm:mb-0 px-4 pt-4 border-t">
+      <div className="relative flex-1 shadow-sm rounded-lg overflow-hidden ring-1 ring-accent ring-inset focus-within:ring-2 focus-within:ring-primary">
+        <TextareaAutosize
           ref={textareaRef}
-          rows={2}
-          maxRows={4}
-          disabled={isPending}
-          value={input}
           onKeyDown={(e) => {
             if (e.key === "Enter" && !e.shiftKey) {
               e.preventDefault();
-              const message: GPTMessage = {
-                id: Date.now().toString(),
-                isUserMessage: true,
-                text: input,
-              };
-              sendMessage(message);
-              setInput("");
+              sendMessage();
             }
           }}
+          rows={1}
+          value={input}
           onChange={(e) => setInput(e.target.value)}
-          autoFocus
-          placeholder="Type"
-          className="m-4"
+          placeholder={`Message ${chatPartner.name}`}
+          className="block border-0 bg-transparent sm:py-1.5 w-full placeholder:text-accent sm:text-sm sm:leading-6 resize-none focus:ring-0"
         />
 
-        <div className="right-0 absolute inset-y-0 flex py-1.5 pr-1.5">
-          <kbd className="inline-flex items-center border-gray-200 bg-white px-1 border rounded font-sans text-gray-400 text-xs">
-            {isPending ? (
-              <Loader2Icon className="w-3 h-3 animate-spin" />
-            ) : (
-              <CornerDownLeftIcon className="w-3 h-3" />
-            )}
-          </kbd>
+        <div className="right-0 bottom-0 absolute flex justify-between">
+          <div className="flex-shrink-0">
+            <Button isLoading={isLoading} onClick={sendMessage} type="submit">
+              Post
+            </Button>
+          </div>
         </div>
-        <div
-          className="bottom-0 absolute inset-x-0 border-gray-300 peer-focus:border-indigo-600 border-t peer-focus:border-t-2"
-          aria-hidden="true"
-        />
       </div>
     </div>
   );

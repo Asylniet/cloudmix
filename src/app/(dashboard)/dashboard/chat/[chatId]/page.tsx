@@ -79,7 +79,7 @@ const ChatPage: FC<ChatPageProps> = async ({ params }) => {
         </div>
       </div>
       <Messages sessionId={session.user.id} initialMessages={initialMessages} />
-      <ChatInput />
+      <ChatInput chatPartner={chatPartner} chatId={chatId} />
     </div>
   );
 };

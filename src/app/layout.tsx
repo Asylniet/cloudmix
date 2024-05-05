@@ -30,10 +30,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en">
       <Providers>
         <body className={inter.className}>
-          <ThemeProvider attribute="class">
+          <ThemeProvider attribute="class" enableSystem>
             <main>{children}</main>
             <Sonner />
             <Toaster />

@@ -63,12 +63,12 @@ const AddFriendButton: FC<AddFriendButtonProps> = ({}) => {
           id="email"
           placeholder="you@example.com"
         />
-        <p className="mt-1 text-destructive text-sm">{errors.email?.message}</p>
         <Button>Add</Button>
-        {showSuccessState ? (
-          <p className="mt-1 text-sm text-success">Friend request sent!</p>
-        ) : null}
       </div>
+      <p className="mt-1 text-destructive text-sm">{errors.email?.message}</p>
+      {showSuccessState ? (
+        <p className="mt-1 text-green-500 text-sm">Friend request sent!</p>
+      ) : null}
     </form>
   );
 };

@@ -6,7 +6,7 @@ type DashboardPageProps = {};
 
 const DashboardPage: FC<DashboardPageProps> = async ({}) => {
   const session = await getServerSession(authOptions);
-  return <div>{JSON.stringify(session)}</div>;
+  return <div>Dashboard</div>;
 };
 
 export default DashboardPage;

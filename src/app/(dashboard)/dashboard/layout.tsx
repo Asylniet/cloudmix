@@ -4,10 +4,13 @@ import { getServerSession } from "next-auth";
 import { PlusIcon } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { FC, PropsWithChildren, ReactNode } from "react";
+import { PropsWithChildren, ReactNode } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { getNameInitials } from "@/helpers/getNameInitials";
 import SignoutButton from "@/components/SignoutButton";
+import { fetchRedis } from "@/helpers/redis";
+import { User } from "@/lib/validators/user";
+import FriendRequestSidebarOptions from "@/components/FriendRequestsSidebarOptions";
 
 type LayoutProps = PropsWithChildren & {};
 
@@ -30,6 +33,13 @@ const sidebarOptions: SidebarOption[] = [
 const Layout = async ({ children }: LayoutProps) => {
   const session = await getServerSession(authOptions);
   if (!session) notFound();
+
+  const unseenRequestCount = (
+    (await fetchRedis(
+      "smembers",
+      `user:${session.user.id}:incoming_friend_requests`
+    )) as User[]
+  ).length;
 
   return (
     <div className="flex w-full h-screen">
@@ -58,6 +68,13 @@ const Layout = async ({ children }: LayoutProps) => {
                     </Link>
                   </li>
                 ))}
+
+                <li>
+                  <FriendRequestSidebarOptions
+                    sessionId={session.user.id}
+                    initialUnseenRequestCount={unseenRequestCount}
+                  />
+                </li>
               </ul>
             </li>
 

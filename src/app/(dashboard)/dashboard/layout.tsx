@@ -8,6 +8,7 @@ import SessionProvider from "@/components/SessionProvider";
 type LayoutProps = PropsWithChildren & {};
 
 const Layout = async ({ children }: LayoutProps) => {
+  console.log("session");
   const session = await getServerSession(authOptions);
   if (!session) notFound();
 

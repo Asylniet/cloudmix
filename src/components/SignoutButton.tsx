@@ -3,32 +3,29 @@
 import { FC, useState } from "react";
 import { Button, ButtonProps } from "./ui/button";
 import { signOut } from "next-auth/react";
-import { useToast } from "./ui/use-toast";
 import { LogOutIcon } from "lucide-react";
+import { useMutation } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 type SignoutButtonProps = ButtonProps & {};
 
 const SignoutButton: FC<SignoutButtonProps> = ({ ...props }) => {
-  const [isSigningOut, setIsSigningOut] = useState<boolean>(false);
-  const { toast } = useToast();
-  const handleOnClick = async () => {
-    setIsSigningOut(true);
-    try {
-      await signOut();
-    } catch (error) {
-      toast({
-        title: "There was an error signing out",
-        variant: "destructive",
+  const { mutate, isPending, mutateAsync } = useMutation({
+    mutationFn: async () => await signOut(),
+    mutationKey: ["signOut"],
+    onMutate: () => {
+      toast.promise(mutateAsync, {
+        loading: "Signing out...",
+        success: "Successfully signed out",
+        error: "Failed to sign out",
       });
-    } finally {
-      setIsSigningOut(false);
-    }
-  };
+    },
+  });
   return (
     <Button
-      isLoading={isSigningOut}
       {...props}
-      onClick={handleOnClick}
+      isLoading={isPending}
+      onClick={() => mutate()}
       variant="ghost"
     >
       <LogOutIcon />

@@ -15,4 +15,11 @@ export const ChatShema = z.object({
   messages: z.array(MessageSchema),
 });
 
+const MessageNotificationSchema = z.object({
+  senderImg: z.string(),
+  senderName: z.string(),
+});
+
 export type Message = z.infer<typeof MessageSchema>;
+export type MessageNotification = z.infer<typeof MessageNotificationSchema> &
+  Message;

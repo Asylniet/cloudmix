@@ -35,8 +35,7 @@ export default function RootLayout({
         <body className={inter.className}>
           <ThemeProvider attribute="class" enableSystem>
             <main>{children}</main>
-            <Sonner />
-            <Toaster />
+            <Sonner closeButton />
           </ThemeProvider>
         </body>
       </Providers>

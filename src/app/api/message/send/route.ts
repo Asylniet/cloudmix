@@ -55,6 +55,16 @@ export async function POST(req: Request) {
       message
     );
 
+    pusherServer.trigger(
+      convertToPusherKey(`user:${friendId}:chats`),
+      "new_message",
+      {
+        ...message,
+        senderImg: sender.image,
+        senderName: sender.name,
+      }
+    );
+
     await redis.zadd(`chat:${chatId}:messages`, {
       score: Date.now(),
       member: JSON.stringify(message),

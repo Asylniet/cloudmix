@@ -1,9 +1,9 @@
-import { Message } from "@/lib/validators/gptMessage";
+import { GPTMessage } from "@/lib/validators/gptMessage";
 import { ReactNode, createContext, useState } from "react";
 
-export const MessageContext = createContext<{
-  messages: Message[];
-  addMessage: (message: Message) => void;
+export const GPTMessageContext = createContext<{
+  messages: GPTMessage[];
+  addMessage: (message: GPTMessage) => void;
   removeMessage: (id: string) => void;
   updateMessage: (id: string, updateFn: (prevText: string) => string) => void;
   isMessagePending: boolean;
@@ -17,8 +17,8 @@ export const MessageContext = createContext<{
   setIsMessagePending: () => {},
 });
 
-export function MessagesProvider({ children }: { children: ReactNode }) {
-  const [messages, setMessages] = useState<Message[]>([
+export function GPTMessagesProvider({ children }: { children: ReactNode }) {
+  const [messages, setMessages] = useState<GPTMessage[]>([
     {
       id: "1",
       isUserMessage: false,
@@ -27,7 +27,7 @@ export function MessagesProvider({ children }: { children: ReactNode }) {
   ]);
   const [isMessagePending, setIsMessagePending] = useState<boolean>(false);
 
-  const addMessage = (message: Message) => {
+  const addMessage = (message: GPTMessage) => {
     setMessages((prev) => [...prev, message]);
   };
 
@@ -54,7 +54,7 @@ export function MessagesProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <MessageContext.Provider
+    <GPTMessageContext.Provider
       value={{
         messages,
         addMessage,
@@ -65,6 +65,6 @@ export function MessagesProvider({ children }: { children: ReactNode }) {
       }}
     >
       {children}
-    </MessageContext.Provider>
+    </GPTMessageContext.Provider>
   );
 }

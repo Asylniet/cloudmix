@@ -79,6 +79,7 @@ const ChatPage: FC<ChatPageProps> = async ({ params }) => {
         </div>
       </div>
       <Messages
+        chatId={chatId}
         sessionImg={session.user.image}
         sessionName={session.user.name}
         chatPartner={chatPartner}

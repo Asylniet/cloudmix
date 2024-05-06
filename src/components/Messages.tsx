@@ -1,14 +1,17 @@
 "use client";
 
-import { cn } from "@/lib/utils";
+import { cn, convertToPusherKey } from "@/lib/utils";
 import { Message } from "@/lib/validators/message";
-import { FC, useRef, useState } from "react";
+import { FC, useEffect, useRef, useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { getNameInitials } from "@/helpers/getNameInitials";
 import { User } from "@/lib/validators/user";
+import { pusherClient } from "@/lib/pusherClient";
+import { IncomingFriendRequest } from "@/lib/validators/incomingRequest";
 
 type MessagesProps = {
   initialMessages: Message[];
+  chatId: string;
   sessionId: string;
   chatPartner: User;
   sessionImg: string;
@@ -17,6 +20,7 @@ type MessagesProps = {
 
 const Messages: FC<MessagesProps> = ({
   initialMessages,
+  chatId,
   sessionId,
   sessionImg,
   chatPartner,
@@ -31,6 +35,24 @@ const Messages: FC<MessagesProps> = ({
       minute: "2-digit",
     });
   };
+
+  useEffect(() => {
+    pusherClient.subscribe(convertToPusherKey(`chat:${chatId}`));
+
+    const messageHandler = (message: Message) => {
+      setMessages((prev) => {
+        return [message, ...prev];
+      });
+    };
+
+    pusherClient.bind("incoming_message", messageHandler);
+
+    return () => {
+      pusherClient.unsubscribe(convertToPusherKey(`chat:${chatId}`));
+      pusherClient.unbind("incoming_message", messageHandler);
+    };
+  }, [sessionId]);
+
   return (
     <div className="flex flex-col-reverse flex-1 gap-2 scrollbar-thumb-blue p-3 scrollbar-thumb-rounded scrollbar-w-2 h-full overflow-y-auto scrollbar-track-blue-lighter scrolling-touch">
       <div ref={scrollDownRef} />

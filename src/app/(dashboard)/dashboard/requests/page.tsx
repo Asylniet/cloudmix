@@ -32,7 +32,7 @@ const RequestsPage: FC<RequestsPageProps> = async ({}) => {
 
   return (
     <main className="pt-8">
-      <h1 className="mb-8 font-bold text-5xl">Add a friend</h1>
+      <h1 className="mb-8 font-bold text-5xl">Friend requests</h1>
       <div className="flex-col gap-4 fkex">
         <FriendRequests
           incomingRequests={incomingRequests}

@@ -1,6 +1,8 @@
 import { fetchRedis } from "@/helpers/redis";
 import { authOptions } from "@/lib/auth";
+import { pusherServer } from "@/lib/pusherServer";
 import { redis } from "@/lib/redis";
+import { convertToPusherKey } from "@/lib/utils";
 import { getServerSession } from "next-auth";
 import { z } from "zod";
 
@@ -37,6 +39,12 @@ export async function POST(req: Request) {
     if (!hasFriendRequest) {
       return new Response("No friend request", { status: 400 });
     }
+
+    pusherServer.trigger(
+      convertToPusherKey(`user:${idToAdd}:friends`),
+      "new_friend",
+      {}
+    );
 
     await redis.sadd(`user:${session.user.id}:friends`, idToAdd);
 

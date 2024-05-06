@@ -1,6 +1,6 @@
 import { getRedisCredentials } from "./getRedisCredentials";
 
-type Command = "zrange" | "sismember" | "get" | "smembers";
+type Command = "zrange" | "sismember" | "get" | "smembers" | "keys";
 
 export async function fetchRedis(
   command: Command,

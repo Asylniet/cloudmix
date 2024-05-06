@@ -6,7 +6,7 @@ import { getToken } from "next-auth/jwt";
 export default withAuth(
   async function middleware(req: NextRequest) {
     const pathname = req.nextUrl.pathname;
-    if (pathname.startsWith("/api/message")) {
+    if (pathname.startsWith("/api/gpt/message")) {
       const ip = req.ip ?? "127.0.0.1";
 
       try {

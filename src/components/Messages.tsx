@@ -51,7 +51,7 @@ const Messages: FC<MessagesProps> = ({
       pusherClient.unsubscribe(convertToPusherKey(`chat:${chatId}`));
       pusherClient.unbind("incoming_message", messageHandler);
     };
-  }, [sessionId]);
+  }, [sessionId, chatId]);
 
   return (
     <div className="flex flex-col-reverse flex-1 gap-2 scrollbar-thumb-blue p-3 scrollbar-thumb-rounded scrollbar-w-2 h-full overflow-y-auto scrollbar-track-blue-lighter scrolling-touch">

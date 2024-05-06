@@ -4,7 +4,6 @@ import "./globals.css";
 import Providers from "@/components/Providers";
 import { ThemeProvider } from "next-themes";
 import { Toaster as Sonner } from "@/components/ui/sonner";
-import { Toaster } from "@/components/ui/toaster";
 
 const inter = Inter({ subsets: ["latin", "cyrillic"] });
 
@@ -30,10 +29,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <Providers>
         <body className={inter.className}>
-          <ThemeProvider attribute="class" enableSystem>
+          <ThemeProvider>
             <main>{children}</main>
             <Sonner closeButton />
           </ThemeProvider>

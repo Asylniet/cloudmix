@@ -56,8 +56,10 @@ export async function POST(req: Request) {
       convertToPusherKey(`user:${idToAdd}:incoming_friend_requests`),
       "incoming_friend_requests",
       {
-        senderId: session.user.id,
-        senderEmail: session.user.email,
+        id: session.user.id,
+        email: session.user.email,
+        image: session.user.image,
+        name: session.user.name,
       }
     );
 

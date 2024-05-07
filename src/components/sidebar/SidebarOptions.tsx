@@ -1,4 +1,4 @@
-import { UserRoundPlusIcon } from "lucide-react";
+import { UserPlusIcon } from "lucide-react";
 import { FC, ReactNode } from "react";
 import SidebarItem from "./SidebarItem";
 
@@ -16,7 +16,7 @@ const sidebarOptions: SidebarOption[] = [
     id: 1,
     name: "Add friend",
     href: "/dashboard/add",
-    Icon: <UserRoundPlusIcon />,
+    Icon: <UserPlusIcon />,
   },
 ];
 

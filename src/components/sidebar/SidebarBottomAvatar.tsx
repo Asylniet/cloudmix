@@ -1,7 +1,7 @@
 "use client";
 import { FC } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import SignoutButton from "../SignoutButton";
+import SignoutButton from "./SignoutButton";
 import { getNameInitials } from "@/helpers/getNameInitials";
 import { useSessionContext } from "@/hooks/useSessionContext";
 

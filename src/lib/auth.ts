@@ -10,6 +10,10 @@ export const authOptions: NextAuthOptions = {
   adapter: UpstashRedisAdapter(redis),
   debug: process.env.NODE_ENV === "development",
   useSecureCookies: process.env.NODE_ENV !== "development",
+  theme: {
+    colorScheme: "auto",
+    brandColor: "#9969FF",
+  },
   session: {
     strategy: "jwt",
   },

@@ -1,4 +1,5 @@
 import { fetchRedis } from "@/helpers/redis";
+import { IncomingFriendRequestSchema } from "@/lib/validators/incomingRequest";
 import { UserSchema } from "@/lib/validators/user";
 
 class UserAPI {
@@ -24,6 +25,29 @@ class UserAPI {
       return matchingUsers;
     } catch (error) {
       throw new Error(`Something went wrong`);
+    }
+  };
+
+  getIncomingFriendRequests = async (userId: string) => {
+    try {
+      const incomingRequestIds = (await fetchRedis(
+        "smembers",
+        `user:${userId}:incoming_friend_requests`
+      )) as string[];
+
+      const incomingRequests = [];
+      for (const userId of incomingRequestIds) {
+        const requestRaw = await fetchRedis("get", `user:${userId}`);
+        const request = UserSchema.parse(JSON.parse(requestRaw));
+        incomingRequests.push(request);
+      }
+
+      return incomingRequests;
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new Error(error.message);
+      }
+      throw new Error("Something went wrong");
     }
   };
 }

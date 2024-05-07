@@ -1,27 +1,46 @@
 "use client";
 
 import { pusherClient } from "@/lib/pusherClient";
-import { chatHRefConstructor, cn, convertToPusherKey } from "@/lib/utils";
+import { chatHRefConstructor, convertToPusherKey } from "@/lib/utils";
 import { Message, MessageNotification } from "@/lib/validators/message";
 import { User } from "@/lib/validators/user";
 import { usePathname, useRouter } from "next/navigation";
 import { FC, useEffect, useState } from "react";
 import { toast } from "sonner";
 import Image from "next/image";
+import { useSessionContext } from "@/hooks/useSessionContext";
 
 type SidebarChatListProps = {
   friends: User[];
-  sessionId: string;
 };
 
-const SidebarChatList: FC<SidebarChatListProps> = ({ friends, sessionId }) => {
+const SidebarChatList: FC<SidebarChatListProps> = ({ friends }) => {
+  const session = useSessionContext();
   const router = useRouter();
   const pathname = usePathname();
   const [unseenMessages, setUnseenMessages] = useState<Message[]>([]);
 
+  // usePusherClientSubscribe({
+  //   bindKey: "new_message",
+  //   handler: (message: MessageNotification) => {
+  //     setUnseenMessages((prev) => [...prev, message]);
+  //   },
+  //   subscribeKey: convertToPusherKey(`user:${session.user.id}:chats`),
+  // });
+
+  // usePusherClientSubscribe({
+  //   bindKey: "new_friend",
+  //   handler: () => {
+  //     router.refresh();
+  //   },
+  //   subscribeKey: convertToPusherKey(`user:${session.user.id}:friends`),
+  // });
+
   useEffect(() => {
-    pusherClient.subscribe(convertToPusherKey(`user:${sessionId}:chats`));
-    pusherClient.subscribe(convertToPusherKey(`user:${sessionId}:friends`));
+    pusherClient.subscribe(convertToPusherKey(`user:${session.user.id}:chats`));
+    pusherClient.subscribe(
+      convertToPusherKey(`user:${session.user.id}:friends`)
+    );
 
     const newFriendHandler = () => {
       router.refresh();
@@ -30,7 +49,10 @@ const SidebarChatList: FC<SidebarChatListProps> = ({ friends, sessionId }) => {
     const chatHandler = (message: MessageNotification) => {
       const shouldNotify =
         pathname !==
-        `/dashboard/chat/${chatHRefConstructor(sessionId, message.senderId)}`;
+        `/dashboard/chat/${chatHRefConstructor(
+          session.user.id,
+          message.senderId
+        )}`;
 
       if (!shouldNotify) return;
 
@@ -38,7 +60,7 @@ const SidebarChatList: FC<SidebarChatListProps> = ({ friends, sessionId }) => {
         <a
           onClick={() => console.log("HELLO")}
           href={`/dashboard/chat/${chatHRefConstructor(
-            sessionId,
+            session.user.id,
             message.senderId
           )}`}
         >
@@ -72,13 +94,17 @@ const SidebarChatList: FC<SidebarChatListProps> = ({ friends, sessionId }) => {
     pusherClient.bind("new_friend", newFriendHandler);
 
     return () => {
-      pusherClient.unsubscribe(convertToPusherKey(`user:${sessionId}:chats`));
-      pusherClient.unsubscribe(convertToPusherKey(`user:${sessionId}:friends`));
+      pusherClient.unsubscribe(
+        convertToPusherKey(`user:${session.user.id}:chats`)
+      );
+      pusherClient.unsubscribe(
+        convertToPusherKey(`user:${session.user.id}:friends`)
+      );
 
       pusherClient.unbind("new_message", chatHandler);
       pusherClient.unbind("new_friend", newFriendHandler);
     };
-  }, [pathname, router, sessionId]);
+  }, [pathname, router, session.user.id]);
 
   useEffect(() => {
     if (pathname?.includes("chat")) {
@@ -89,7 +115,7 @@ const SidebarChatList: FC<SidebarChatListProps> = ({ friends, sessionId }) => {
   }, [pathname]);
 
   return (
-    <ul role="list" className="space-y1 -mx-2 max-h-[25rem] overflow-y-auto">
+    <ul role="list" className="space-y1 -mx-2 overflow-y-auto">
       {friends.sort().map((friend) => {
         const unseenMessagesCount = unseenMessages.filter(
           (msg) => msg.senderId === friend.id
@@ -98,7 +124,7 @@ const SidebarChatList: FC<SidebarChatListProps> = ({ friends, sessionId }) => {
           <li key={friend.id}>
             <a
               href={`/dashboard/chat/${chatHRefConstructor(
-                sessionId,
+                session.user.id,
                 friend.id
               )}`}
               className="flex items-center gap-x-3 hover:bg-accent p-2 rounded-md font-semibold text-sm hover:text-primary leading-6 group"

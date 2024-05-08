@@ -1,31 +1,19 @@
 import { fetchRedis } from "@/helpers/redis";
 import { IncomingFriendRequestSchema } from "@/lib/validators/incomingRequest";
-import { UserSchema } from "@/lib/validators/user";
+import { User, UserSchema } from "@/lib/validators/user";
+import axios from "axios";
 
 class UserAPI {
   searchUsers = async (query: string) => {
-    try {
-      const allKeys = await fetchRedis("keys", "user:*");
-      const matchingUsers = [];
+    const response = await axios.get<User[]>(
+      `/api/users/search?query=${query}`
+    );
+    return response.data;
+  };
 
-      for (const key of allKeys) {
-        const data = key.split("user:")[1];
-        if (!data.includes(":")) {
-          const userRaw = await fetchRedis("get", key);
-          const user = UserSchema.parse(JSON.parse(userRaw));
-          if (
-            user.name.toLowerCase().includes(query.toLowerCase()) ||
-            user.email.toLowerCase().includes(query.toLowerCase())
-          ) {
-            matchingUsers.push(user);
-          }
-        }
-      }
-
-      return matchingUsers;
-    } catch (error) {
-      throw new Error(`Something went wrong`);
-    }
+  addFriend = async (id: string) => {
+    const response = await axios.post(`/api/friends/add`, { id });
+    return response.data;
   };
 
   getIncomingFriendRequests = async (userId: string) => {

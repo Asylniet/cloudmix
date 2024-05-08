@@ -1,4 +1,4 @@
-import AddFriendButton from "@/components/AddFriendButton";
+import AddFriendButton from "@/components/SearchUsersDialog";
 import FriendRequests from "@/components/FriendRequests";
 import { fetchRedis } from "@/helpers/redis";
 import { authOptions } from "@/lib/auth";

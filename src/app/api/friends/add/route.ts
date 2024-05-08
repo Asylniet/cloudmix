@@ -1,33 +1,25 @@
-import { getRedisCredentials } from "@/helpers/getRedisCredentials";
 import { fetchRedis } from "@/helpers/redis";
 import { authOptions } from "@/lib/auth";
 import { pusherServer } from "@/lib/pusherServer";
 import { redis } from "@/lib/redis";
 import { convertToPusherKey } from "@/lib/utils";
-import { addFriendValidator } from "@/lib/validators/add-friend";
 import { getServerSession } from "next-auth";
 import { z } from "zod";
 
 export async function POST(req: Request) {
   try {
-    const body = await req.json();
-    const { url, token } = getRedisCredentials();
-
-    const { email: emailToAdd } = addFriendValidator.parse(body);
-
-    const idToAdd = (await fetchRedis(
-      "get",
-      `user:email:${emailToAdd}`
-    )) as string;
-
-    if (!idToAdd) {
-      return new Response("User not found", { status: 404 });
-    }
-
     const session = await getServerSession(authOptions);
 
     if (!session) {
       return new Response("Unauthorized", { status: 401 });
+    }
+
+    const body = await req.json();
+
+    const { id: idToAdd } = body;
+
+    if (!idToAdd) {
+      return new Response("No user provided", { status: 404 });
     }
 
     if (idToAdd === session.user.id) {

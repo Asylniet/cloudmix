@@ -22,7 +22,7 @@ const Sidebar: FC<SidebarProps> = async ({ sessionUser }) => {
       <nav className="flex flex-col flex-1">
         <ul role="list" className="h-full">
           <SidebarTabs friends={friends} incomingRequests={unseenRequests} />
-          <li className="bottom-0 left-0 sticky flex items-center bg-background mt-auto border w-full">
+          <li className="bottom-0 left-0 sticky flex items-center bg-background mt-auto w-full">
             <SidebarBottomAvatar />
           </li>
         </ul>

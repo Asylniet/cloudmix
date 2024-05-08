@@ -11,10 +11,12 @@ import { toast } from "sonner";
 import Link from "next/link";
 import { User } from "@/lib/validators/user";
 import Avatar from "../Avatar";
+import { useSearchUsersDialogStore } from "@/store/useSearchUsersDialog";
 
 interface SidebarFriendRequestsProps {}
 
 const SidebarFriendRequests: FC<SidebarFriendRequestsProps> = ({}) => {
+  const { setIsOpen } = useSearchUsersDialogStore();
   const session = useSessionContext();
   const { friendRequests, addFriendRequest, removeFriendRequest } =
     useFriendRequestsStore();
@@ -54,9 +56,7 @@ const SidebarFriendRequests: FC<SidebarFriendRequestsProps> = ({}) => {
           <p className="text-center text-secondary text-sm">
             No friend requests
           </p>
-          <Button asChild>
-            <Link href="/dashboard/add">Add friend</Link>
-          </Button>
+          <Button onClick={() => setIsOpen(true)}>Add friend</Button>
         </div>
       ) : (
         friendRequests.map((request) => (

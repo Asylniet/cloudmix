@@ -2,11 +2,12 @@
 import { FC, useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import SidebarChatList from "./SidebarChatList";
-import SidebarOptions from "./SidebarOptions";
 import SidebarFriendRequests from "./SidebarFriendRequests";
-import { IncomingFriendRequest } from "@/lib/validators/incomingRequest";
 import { User } from "@/lib/validators/user";
 import { useFriendRequestsStore } from "@/store/useFriendRequestsStore";
+import SidebarItem from "./SidebarItem";
+import { useSearchUsersDialogStore } from "@/store/useSearchUsersDialog";
+import { UserPlusIcon } from "lucide-react";
 
 type SidebarTabsProps = {
   incomingRequests: User[];
@@ -15,6 +16,7 @@ type SidebarTabsProps = {
 
 const SidebarTabs: FC<SidebarTabsProps> = ({ friends, incomingRequests }) => {
   const { setFriendRequests, friendRequests } = useFriendRequestsStore();
+  const { setIsOpen } = useSearchUsersDialogStore();
   useEffect(() => {
     setFriendRequests(incomingRequests);
   }, [incomingRequests, setFriendRequests]);
@@ -36,7 +38,14 @@ const SidebarTabs: FC<SidebarTabsProps> = ({ friends, incomingRequests }) => {
       </TabsContent>
       <TabsContent value="friends">
         <ul role="list" className="flex flex-col flex-1">
-          <SidebarOptions />
+          <li>
+            <SidebarItem
+              name="Add friend"
+              Icon={<UserPlusIcon />}
+              onClick={() => setIsOpen(true)}
+              shortCut="⌘K"
+            />
+          </li>
           <li className="mt-6">
             <div className="px-2 font-semibold text-secondary text-xs leading-6">
               New Friend Requests

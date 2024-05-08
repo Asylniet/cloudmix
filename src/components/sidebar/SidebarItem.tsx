@@ -1,27 +1,41 @@
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import React, { FC } from "react";
+import { Button } from "../ui/button";
+import { CommandShortcut } from "../ui/command";
 
-export type SidebarItemProps = {
+export type SidebarItemProps = LinkSidebarItemProps | ButtonSidebarItemProps;
+
+type BaseSidebarItemProps = {
   name: string;
   Icon: React.ReactNode;
-  href: string;
   isLast?: boolean;
   className?: string;
+};
+
+type LinkSidebarItemProps = BaseSidebarItemProps & {
+  href: string;
+};
+
+type ButtonSidebarItemProps = BaseSidebarItemProps & {
+  onClick: () => void;
+  shortCut?: string;
 };
 
 const SidebarItem: FC<SidebarItemProps> = ({
   name,
   Icon,
-  href,
   isLast,
   className,
+  ...props
 }) => {
+  const Slot = "href" in props ? Link : "div";
   return (
-    <Link
-      href={href}
+    <Slot
+      href={(props as LinkSidebarItemProps).href}
+      onClick={(props as ButtonSidebarItemProps).onClick}
       className={cn(
-        "flex gap-4 hover:bg-accent px-2 py-3 font-semibold text-sm hover:text-primary leading-6 group",
+        "flex items-center gap-4 hover:bg-accent px-2 py-3 font-semibold text-sm hover:text-primary leading-6 group cursor-pointer",
         {
           "border-b border-accent": !isLast,
         },
@@ -30,7 +44,10 @@ const SidebarItem: FC<SidebarItemProps> = ({
     >
       {Icon}
       <span className="truncate">{name}</span>
-    </Link>
+      {"shortCut" in props && (
+        <CommandShortcut>{props.shortCut}</CommandShortcut>
+      )}
+    </Slot>
   );
 };
 

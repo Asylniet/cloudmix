@@ -8,6 +8,9 @@ import { useFriendRequestsStore } from "@/store/useFriendRequestsStore";
 import SidebarItem from "./SidebarItem";
 import { useSearchUsersDialogStore } from "@/store/useSearchUsersDialog";
 import { UserPlusIcon } from "lucide-react";
+import { usePusherClientSubscribe } from "@/hooks/usePusherClientSubscribe";
+import { toast } from "sonner";
+import { useSessionContext } from "@/hooks/useSessionContext";
 
 type SidebarTabsProps = {
   incomingRequests: User[];
@@ -15,11 +18,23 @@ type SidebarTabsProps = {
 };
 
 const SidebarTabs: FC<SidebarTabsProps> = ({ friends, incomingRequests }) => {
-  const { setFriendRequests, friendRequests } = useFriendRequestsStore();
+  const { setFriendRequests, friendRequests, addFriendRequest } =
+    useFriendRequestsStore();
   const { setIsOpen } = useSearchUsersDialogStore();
+  const session = useSessionContext();
   useEffect(() => {
     setFriendRequests(incomingRequests);
   }, [incomingRequests, setFriendRequests]);
+
+  usePusherClientSubscribe({
+    bindKey: "incoming_friend_requests",
+    handler: (friend: User) => {
+      addFriendRequest(friend);
+      toast.info("New friend request");
+    },
+    subscribeKey: `user:${session.user.id}:incoming_friend_requests`,
+  });
+
   return (
     <Tabs defaultValue="messages" className="w-full h-full">
       <TabsList className="-top-4 left-0 sticky rounded-none w-full">
@@ -28,7 +43,7 @@ const SidebarTabs: FC<SidebarTabsProps> = ({ friends, incomingRequests }) => {
         </TabsTrigger>
         <TabsTrigger value="friends" className="flex-1">
           Friends
-          {friendRequests.length > 0 && ` (${incomingRequests.length})`}
+          {friendRequests.length > 0 && ` (${friendRequests.length})`}
         </TabsTrigger>
       </TabsList>
       <TabsContent value="messages" className="h-full">
@@ -49,7 +64,7 @@ const SidebarTabs: FC<SidebarTabsProps> = ({ friends, incomingRequests }) => {
           <li className="mt-6">
             <div className="px-2 font-semibold text-secondary text-xs leading-6">
               New Friend Requests
-              {friendRequests.length > 0 && ` (${incomingRequests.length})`}
+              {friendRequests.length > 0 && ` (${friendRequests.length})`}
             </div>
           </li>
           <li>

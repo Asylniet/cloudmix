@@ -3,13 +3,9 @@
 import { CheckIcon, InboxIcon, XIcon } from "lucide-react";
 import { FC } from "react";
 import { useSessionContext } from "@/hooks/useSessionContext";
-import { usePusherClientSubscribe } from "@/hooks/usePusherClientSubscribe";
 import axios from "axios";
 import { Button } from "../ui/button";
 import { useFriendRequestsStore } from "@/store/useFriendRequestsStore";
-import { toast } from "sonner";
-import Link from "next/link";
-import { User } from "@/lib/validators/user";
 import Avatar from "../Avatar";
 import { useSearchUsersDialogStore } from "@/store/useSearchUsersDialog";
 
@@ -18,8 +14,7 @@ interface SidebarFriendRequestsProps {}
 const SidebarFriendRequests: FC<SidebarFriendRequestsProps> = ({}) => {
   const { setIsOpen } = useSearchUsersDialogStore();
   const session = useSessionContext();
-  const { friendRequests, addFriendRequest, removeFriendRequest } =
-    useFriendRequestsStore();
+  const { friendRequests, removeFriendRequest } = useFriendRequestsStore();
 
   const acceptFriend = async (senderId: string) => {
     await axios.post("/api/friends/accept", {
@@ -38,15 +33,6 @@ const SidebarFriendRequests: FC<SidebarFriendRequestsProps> = ({}) => {
 
     removeFriendRequest(senderId);
   };
-
-  usePusherClientSubscribe({
-    bindKey: "incoming_friend_requests",
-    handler: (friend: User) => {
-      addFriendRequest(friend);
-      toast.info("New friend request");
-    },
-    subscribeKey: `user:${session.user.id}:incoming_friend_requests`,
-  });
 
   return (
     <div className="relative">

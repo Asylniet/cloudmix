@@ -34,7 +34,9 @@ const SearchUsersList: FC<SearchUsersListProps> = ({
           <CommandEmpty>
             <LoaderCircle className="mx-auto animate-spin" />
           </CommandEmpty>
-        ) : null}
+        ) : (
+          <CommandEmpty>Nothing found</CommandEmpty>
+        )}
         {!!data && data.length > 0 ? (
           <CommandGroup
             heading={`Found ${!!data ? data.length : 0} suggestions`}

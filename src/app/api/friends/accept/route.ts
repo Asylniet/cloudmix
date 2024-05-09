@@ -3,6 +3,7 @@ import { authOptions } from "@/lib/auth";
 import { pusherServer } from "@/lib/pusherServer";
 import { redis } from "@/lib/redis";
 import { convertToPusherKey } from "@/lib/utils";
+import { UserSchema } from "@/lib/validators/user";
 import { getServerSession } from "next-auth";
 import { z } from "zod";
 
@@ -10,9 +11,7 @@ export async function POST(req: Request) {
   try {
     const body = await req.json();
 
-    const { id: idToAdd, sessionId } = z
-      .object({ id: z.string(), sessionId: z.string() })
-      .parse(body);
+    const { id: idToAdd } = z.object({ id: z.string() }).parse(body);
 
     const session = await getServerSession(authOptions);
 
@@ -40,10 +39,24 @@ export async function POST(req: Request) {
       return new Response("No friend request", { status: 400 });
     }
 
+    const [userRaw, friendRaw] = (await Promise.all([
+      fetchRedis("get", `user:${session.user.id}`),
+      fetchRedis("get", `user:${idToAdd}`),
+    ])) as [string, string];
+
+    const user = UserSchema.parse(JSON.parse(userRaw));
+    const friend = UserSchema.parse(JSON.parse(friendRaw));
+
     pusherServer.trigger(
       convertToPusherKey(`user:${idToAdd}:friends`),
       "new_friend",
-      {}
+      user
+    );
+
+    pusherServer.trigger(
+      convertToPusherKey(`user:${session.user.id}:friends`),
+      "new_friend",
+      friend
     );
 
     await redis.sadd(`user:${session.user.id}:friends`, idToAdd);

@@ -47,15 +47,13 @@ export async function POST(req: Request) {
     pusherServer.trigger(
       convertToPusherKey(`user:${idToAdd}:incoming_friend_requests`),
       "incoming_friend_requests",
-      {
-        id: session.user.id,
-        email: session.user.email,
-        image: session.user.image,
-        name: session.user.name,
-      }
+      session.user
     );
 
-    redis.sadd(`user:${idToAdd}:incoming_friend_requests`, session.user.id);
+    await redis.sadd(
+      `user:${idToAdd}:incoming_friend_requests`,
+      session.user.id
+    );
     return new Response("Ok");
   } catch (error) {
     if (error instanceof z.ZodError) {

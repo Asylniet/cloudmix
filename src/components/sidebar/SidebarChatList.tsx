@@ -9,6 +9,7 @@ import { FC, useEffect, useState } from "react";
 import { toast } from "sonner";
 import Image from "next/image";
 import { useSessionContext } from "@/hooks/useSessionContext";
+import { usePusherClientSubscribe } from "@/hooks/usePusherClientSubscribe";
 
 type SidebarChatListProps = {
   friends: User[];
@@ -28,13 +29,13 @@ const SidebarChatList: FC<SidebarChatListProps> = ({ friends }) => {
   //   subscribeKey: convertToPusherKey(`user:${session.user.id}:chats`),
   // });
 
-  // usePusherClientSubscribe({
-  //   bindKey: "new_friend",
-  //   handler: () => {
-  //     router.refresh();
-  //   },
-  //   subscribeKey: convertToPusherKey(`user:${session.user.id}:friends`),
-  // });
+  usePusherClientSubscribe({
+    bindKey: "new_friend",
+    handler: () => {
+      router.refresh();
+    },
+    subscribeKey: convertToPusherKey(`user:${session.user.id}:friends`),
+  });
 
   useEffect(() => {
     pusherClient.subscribe(convertToPusherKey(`user:${session.user.id}:chats`));
@@ -43,6 +44,7 @@ const SidebarChatList: FC<SidebarChatListProps> = ({ friends }) => {
     );
 
     const newFriendHandler = () => {
+      toast.success("New friend added");
       router.refresh();
     };
 

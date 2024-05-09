@@ -68,7 +68,7 @@ export async function POST(req: Request) {
       idToAdd
     );
 
-    return new Response("OK");
+    return new Response(idToAdd);
   } catch (error) {
     if (error instanceof z.ZodError) {
       return new Response("Invalid request payload", { status: 422 });

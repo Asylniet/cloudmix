@@ -1,5 +1,4 @@
 import { fetchRedis } from "@/helpers/redis";
-import { IncomingFriendRequestSchema } from "@/lib/validators/incomingRequest";
 import { User, UserSchema } from "@/lib/validators/user";
 import axios from "axios";
 
@@ -13,6 +12,20 @@ class UserAPI {
 
   addFriend = async (id: string) => {
     const response = await axios.post(`/api/friends/add`, { id });
+    return response.data;
+  };
+
+  acceptFriend = async (id: string) => {
+    const response = await axios.post<string>("/api/friends/accept", {
+      id,
+    });
+    return response.data;
+  };
+
+  denyFriend = async (id: string) => {
+    const response = await axios.post<string>("/api/friends/deny", {
+      id,
+    });
     return response.data;
   };
 

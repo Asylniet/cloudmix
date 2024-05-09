@@ -2,37 +2,43 @@
 
 import { CheckIcon, InboxIcon, XIcon } from "lucide-react";
 import { FC } from "react";
-import { useSessionContext } from "@/hooks/useSessionContext";
-import axios from "axios";
 import { Button } from "../ui/button";
 import { useFriendRequestsStore } from "@/store/useFriendRequestsStore";
 import Avatar from "../Avatar";
 import { useSearchUsersDialogStore } from "@/store/useSearchUsersDialog";
+import { useMutation } from "@tanstack/react-query";
+import { userAPI } from "@/service/api/user";
+import { toast } from "sonner";
 
 interface SidebarFriendRequestsProps {}
 
 const SidebarFriendRequests: FC<SidebarFriendRequestsProps> = ({}) => {
   const { setIsOpen } = useSearchUsersDialogStore();
-  const session = useSessionContext();
   const { friendRequests, removeFriendRequest } = useFriendRequestsStore();
 
-  const acceptFriend = async (senderId: string) => {
-    await axios.post("/api/friends/accept", {
-      id: senderId,
-      sessionId: session.user.id,
-    });
+  const { mutate: accept, isPending: acceptIsPending } = useMutation({
+    mutationKey: ["acceptFriend"],
+    mutationFn: userAPI.acceptFriend,
+    onError: (error) => {
+      toast.error(error.message);
+    },
+    onSuccess: (id) => {
+      toast.success("Friend request accepted");
+      removeFriendRequest(id);
+    },
+  });
 
-    removeFriendRequest(senderId);
-  };
-
-  const denyFriend = async (senderId: string) => {
-    await axios.post("/api/friends/deny", {
-      id: senderId,
-      sessionId: session.user.id,
-    });
-
-    removeFriendRequest(senderId);
-  };
+  const { mutate: deny, isPending: denyIsPending } = useMutation({
+    mutationKey: ["acceptFriend"],
+    mutationFn: userAPI.denyFriend,
+    onError: (error) => {
+      toast.error(error.message);
+    },
+    onSuccess: (id) => {
+      toast.success("Friend request accepted");
+      removeFriendRequest(id);
+    },
+  });
 
   return (
     <div className="relative">
@@ -57,7 +63,8 @@ const SidebarFriendRequests: FC<SidebarFriendRequestsProps> = ({}) => {
               aria-label="accept friend"
               size="icon"
               variant="outline"
-              onClick={() => acceptFriend(request.id)}
+              onClick={() => accept(request.id)}
+              isLoading={acceptIsPending}
             >
               <CheckIcon className="w-3/4 h-3/4 font-semibold" />
             </Button>
@@ -65,7 +72,8 @@ const SidebarFriendRequests: FC<SidebarFriendRequestsProps> = ({}) => {
               aria-label="reject friend"
               variant="ghost"
               size="icon"
-              onClick={() => denyFriend(request.id)}
+              onClick={() => deny(request.id)}
+              isLoading={denyIsPending}
             >
               <XIcon className="w-3/4 h-3/4 font-semibold" />
             </Button>

@@ -13,9 +13,10 @@ export const useFriendRequestsStore = create<FriendRequestsState>()((set) => ({
   friendRequests: [],
   addFriendRequest: (request) =>
     set((state) => ({ friendRequests: [...state.friendRequests, request] })),
-  removeFriendRequest: (senderId) =>
+  removeFriendRequest: (senderId) => {
     set((state) => ({
       friendRequests: state.friendRequests.filter((req) => req.id !== senderId),
-    })),
+    }));
+  },
   setFriendRequests: (requests) => set({ friendRequests: requests }),
 }));

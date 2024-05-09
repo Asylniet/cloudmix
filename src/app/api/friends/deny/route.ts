@@ -19,7 +19,7 @@ export async function POST(req: Request) {
       idToDeny
     );
 
-    return new Response("OK");
+    return new Response(idToDeny);
   } catch (error) {
     console.log(error);
 

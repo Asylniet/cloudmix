@@ -32,81 +32,81 @@ const SidebarChatList: FC<SidebarChatListProps> = ({ friends }) => {
   usePusherClientSubscribe({
     bindKey: "new_friend",
     handler: () => {
-      router.refresh();
+      toast.success("You have a new friend!");
     },
     subscribeKey: convertToPusherKey(`user:${session.user.id}:friends`),
   });
 
-  useEffect(() => {
-    pusherClient.subscribe(convertToPusherKey(`user:${session.user.id}:chats`));
-    pusherClient.subscribe(
-      convertToPusherKey(`user:${session.user.id}:friends`)
-    );
+  // useEffect(() => {
+  //   pusherClient.subscribe(convertToPusherKey(`user:${session.user.id}:chats`));
+  //   pusherClient.subscribe(
+  //     convertToPusherKey(`user:${session.user.id}:friends`)
+  //   );
 
-    const newFriendHandler = () => {
-      toast.success("New friend added");
-      router.refresh();
-    };
+  //   const newFriendHandler = () => {
+  //     toast.success("New friend added");
+  //     router.refresh();
+  //   };
 
-    const chatHandler = (message: MessageNotification) => {
-      const shouldNotify =
-        pathname !==
-        `/dashboard/chat/${chatHRefConstructor(
-          session.user.id,
-          message.senderId
-        )}`;
+  //   const chatHandler = (message: MessageNotification) => {
+  //     const shouldNotify =
+  //       pathname !==
+  //       `/dashboard/chat/${chatHRefConstructor(
+  //         session.user.id,
+  //         message.senderId
+  //       )}`;
 
-      if (!shouldNotify) return;
+  //     if (!shouldNotify) return;
 
-      toast(
-        <a
-          onClick={() => console.log("HELLO")}
-          href={`/dashboard/chat/${chatHRefConstructor(
-            session.user.id,
-            message.senderId
-          )}`}
-        >
-          <div className="flex items-start">
-            <div className="flex-shrink-0 pt-0.5">
-              <div className="relative w-10 h-10">
-                <Image
-                  fill
-                  referrerPolicy="no-referrer"
-                  className="rounded-full"
-                  src={message.senderImg}
-                  alt={`${message.senderName}'s profile picture`}
-                />
-              </div>
-            </div>
+  //     toast(
+  //       <a
+  //         onClick={() => console.log("HELLO")}
+  //         href={`/dashboard/chat/${chatHRefConstructor(
+  //           session.user.id,
+  //           message.senderId
+  //         )}`}
+  //       >
+  //         <div className="flex items-start">
+  //           <div className="flex-shrink-0 pt-0.5">
+  //             <div className="relative w-10 h-10">
+  //               <Image
+  //                 fill
+  //                 referrerPolicy="no-referrer"
+  //                 className="rounded-full"
+  //                 src={message.senderImg}
+  //                 alt={`${message.senderName}'s profile picture`}
+  //               />
+  //             </div>
+  //           </div>
 
-            <div className="flex-1 ml-3">
-              <p className="font-medium text-gray-900 text-sm">
-                {message.senderName}
-              </p>
-              <p className="mt-1 text-gray-500 text-sm truncate">
-                {message.text}
-              </p>
-            </div>
-          </div>
-        </a>
-      );
-    };
+  //           <div className="flex-1 ml-3">
+  //             <p className="font-medium text-gray-900 text-sm">
+  //               {message.senderName}
+  //             </p>
+  //             <p className="mt-1 text-gray-500 text-sm truncate">
+  //               {message.text}
+  //             </p>
+  //           </div>
+  //         </div>
+  //       </a>
+  //     );
+  //   };
 
-    pusherClient.bind("new_message", chatHandler);
-    pusherClient.bind("new_friend", newFriendHandler);
+  //   pusherClient.bind("new_message", chatHandler);
+  //   pusherClient.bind("new_friend", newFriendHandler);
 
-    return () => {
-      pusherClient.unsubscribe(
-        convertToPusherKey(`user:${session.user.id}:chats`)
-      );
-      pusherClient.unsubscribe(
-        convertToPusherKey(`user:${session.user.id}:friends`)
-      );
+  //   return () => {
+  //     pusherClient.unsubscribe(
+  //       convertToPusherKey(`user:${session.user.id}:chats`)
+  //     );
+  //     pusherClient.unsubscribe(
+  //       convertToPusherKey(`user:${session.user.id}:friends`)
+  //     );
 
-      pusherClient.unbind("new_message", chatHandler);
-      pusherClient.unbind("new_friend", newFriendHandler);
-    };
-  }, [pathname, router, session.user.id]);
+  //     pusherClient.unbind("new_message", chatHandler);
+  //     pusherClient.unbind("new_friend", newFriendHandler);
+  //   };
+  // }, [pathname, router, session.user.id]);
 
   useEffect(() => {
     if (pathname?.includes("chat")) {

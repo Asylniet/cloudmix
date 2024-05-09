@@ -1,7 +1,7 @@
 "use client";
 
 import { FC, useRef } from "react";
-import { Input } from "./ui/input";
+import { Input } from "../ui/input";
 import {
   Form,
   FormControl,
@@ -9,11 +9,11 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "./ui/form";
-import SearchUsersList from "./searchUsers/SearchUsersList";
+} from "../ui/form";
+import SearchUsersList from "./SearchUsersList";
 import { useSearchUsersForm } from "@/hooks/useSearchUsersForm";
 import { useSearchUsersQuery } from "@/hooks/useSearchUsersQuery";
-import { Dialog, DialogContent } from "./ui/dialog";
+import { Dialog, DialogContent } from "../ui/dialog";
 import { useSearchUsersDialog } from "@/hooks/useSearchUsersDialog";
 
 type SearchUsersDialogProps = {};

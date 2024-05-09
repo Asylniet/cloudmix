@@ -54,12 +54,10 @@ const SidebarTabs: FC<SidebarTabsProps> = ({ friends, incomingRequests }) => {
       <TabsContent value="friends">
         <ul role="list" className="flex flex-col flex-1">
           <li>
-            <SidebarItem
-              name="Add friend"
-              Icon={<UserPlusIcon />}
-              onClick={() => setIsOpen(true)}
-              shortCut="⌘K"
-            />
+            <SidebarItem onClick={() => setIsOpen(true)} shortCut="⌘K">
+              <UserPlusIcon />
+              <span className="truncate">Add friend</span>
+            </SidebarItem>
           </li>
           <li className="mt-6">
             <div className="px-2 font-semibold text-secondary text-xs leading-6">

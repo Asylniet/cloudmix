@@ -7,11 +7,15 @@ import { getServerSession } from "next-auth";
 import { nanoid } from "nanoid";
 import { pusherServer } from "@/lib/pusherServer";
 import { convertToPusherKey } from "@/lib/utils";
+import { z } from "zod";
 
 export async function POST(req: Request) {
   try {
-    const { text, chatId } = await req.json();
-    // TODO: Validate text and chatId
+    const body = await req.json();
+    const { text, chatId } = z
+      .object({ text: z.string(), chatId: z.string() })
+      .parse(body);
+
     const session = await getServerSession(authOptions);
     if (!session) return new Response("Unauthorized", { status: 401 });
 

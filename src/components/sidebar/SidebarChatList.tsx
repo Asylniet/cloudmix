@@ -1,7 +1,7 @@
 "use client";
 
 import { pusherClient } from "@/lib/pusherClient";
-import { chatHRefConstructor, convertToPusherKey } from "@/lib/utils";
+import { chatHRefConstructor, cn, convertToPusherKey } from "@/lib/utils";
 import { Message, MessageNotification } from "@/lib/validators/message";
 import { User } from "@/lib/validators/user";
 import { usePathname, useRouter } from "next/navigation";
@@ -10,6 +10,8 @@ import { toast } from "sonner";
 import Image from "next/image";
 import { useSessionContext } from "@/hooks/useSessionContext";
 import { usePusherClientSubscribe } from "@/hooks/usePusherClientSubscribe";
+import Avatar from "../Avatar";
+import SidebarItem from "./SidebarItem";
 
 type SidebarChatListProps = {
   friends: User[];
@@ -21,13 +23,49 @@ const SidebarChatList: FC<SidebarChatListProps> = ({ friends }) => {
   const pathname = usePathname();
   const [unseenMessages, setUnseenMessages] = useState<Message[]>([]);
 
-  // usePusherClientSubscribe({
-  //   bindKey: "new_message",
-  //   handler: (message: MessageNotification) => {
-  //     setUnseenMessages((prev) => [...prev, message]);
-  //   },
-  //   subscribeKey: convertToPusherKey(`user:${session.user.id}:chats`),
-  // });
+  usePusherClientSubscribe({
+    bindKey: "new_message",
+    handler: (message: MessageNotification) => {
+      console.log({ message });
+      const shouldNotify =
+        pathname !==
+        `/dashboard/chat/${chatHRefConstructor(
+          session.user.id,
+          message.senderId
+        )}`;
+
+      if (!shouldNotify) return;
+
+      toast(
+        <a
+          href={`/dashboard/chat/${chatHRefConstructor(
+            session.user.id,
+            message.senderId
+          )}`}
+        >
+          <div className="flex items-start">
+            <Avatar
+              name={message.senderName}
+              image={message.senderImg}
+              className="w-8 h-8"
+            />
+            <div className="flex-1 ml-3">
+              <p className="font-medium text-gray-900 text-sm">
+                {message.senderName}
+              </p>
+              <p
+                className="mt-1 text-gray-500 text-sm truncate"
+                suppressHydrationWarning
+              >
+                {message.text}
+              </p>
+            </div>
+          </div>
+        </a>
+      );
+    },
+    subscribeKey: convertToPusherKey(`user:${session.user.id}:chats`),
+  });
 
   usePusherClientSubscribe({
     bindKey: "new_friend",
@@ -36,77 +74,6 @@ const SidebarChatList: FC<SidebarChatListProps> = ({ friends }) => {
     },
     subscribeKey: convertToPusherKey(`user:${session.user.id}:friends`),
   });
-
-  // useEffect(() => {
-  //   pusherClient.subscribe(convertToPusherKey(`user:${session.user.id}:chats`));
-  //   pusherClient.subscribe(
-  //     convertToPusherKey(`user:${session.user.id}:friends`)
-  //   );
-
-  //   const newFriendHandler = () => {
-  //     toast.success("New friend added");
-  //     router.refresh();
-  //   };
-
-  //   const chatHandler = (message: MessageNotification) => {
-  //     const shouldNotify =
-  //       pathname !==
-  //       `/dashboard/chat/${chatHRefConstructor(
-  //         session.user.id,
-  //         message.senderId
-  //       )}`;
-
-  //     if (!shouldNotify) return;
-
-  //     toast(
-  //       <a
-  //         onClick={() => console.log("HELLO")}
-  //         href={`/dashboard/chat/${chatHRefConstructor(
-  //           session.user.id,
-  //           message.senderId
-  //         )}`}
-  //       >
-  //         <div className="flex items-start">
-  //           <div className="flex-shrink-0 pt-0.5">
-  //             <div className="relative w-10 h-10">
-  //               <Image
-  //                 fill
-  //                 referrerPolicy="no-referrer"
-  //                 className="rounded-full"
-  //                 src={message.senderImg}
-  //                 alt={`${message.senderName}'s profile picture`}
-  //               />
-  //             </div>
-  //           </div>
-
-  //           <div className="flex-1 ml-3">
-  //             <p className="font-medium text-gray-900 text-sm">
-  //               {message.senderName}
-  //             </p>
-  //             <p className="mt-1 text-gray-500 text-sm truncate">
-  //               {message.text}
-  //             </p>
-  //           </div>
-  //         </div>
-  //       </a>
-  //     );
-  //   };
-
-  //   pusherClient.bind("new_message", chatHandler);
-  //   pusherClient.bind("new_friend", newFriendHandler);
-
-  //   return () => {
-  //     pusherClient.unsubscribe(
-  //       convertToPusherKey(`user:${session.user.id}:chats`)
-  //     );
-  //     pusherClient.unsubscribe(
-  //       convertToPusherKey(`user:${session.user.id}:friends`)
-  //     );
-
-  //     pusherClient.unbind("new_message", chatHandler);
-  //     pusherClient.unbind("new_friend", newFriendHandler);
-  //   };
-  // }, [pathname, router, session.user.id]);
 
   useEffect(() => {
     if (pathname?.includes("chat")) {
@@ -117,27 +84,56 @@ const SidebarChatList: FC<SidebarChatListProps> = ({ friends }) => {
   }, [pathname]);
 
   return (
-    <ul role="list" className="space-y1 -mx-2 overflow-y-auto">
+    <ul role="list" className="overflow-y-auto">
       {friends.sort().map((friend) => {
         const unseenMessagesCount = unseenMessages.filter(
           (msg) => msg.senderId === friend.id
         ).length;
+        const isActive = pathname?.includes(friend.id);
         return (
           <li key={friend.id}>
-            <a
+            <SidebarItem
               href={`/dashboard/chat/${chatHRefConstructor(
                 session.user.id,
                 friend.id
               )}`}
-              className="flex items-center gap-x-3 hover:bg-accent p-2 rounded-md font-semibold text-sm hover:text-primary leading-6 group"
+              className={cn("justify-start gap-2", {
+                "bg-accent": isActive,
+                "hover:bg-accent": !isActive,
+              })}
             >
-              {friend.name}
-              {unseenMessagesCount > 0 ? (
-                <div className="flex justify-center items-center bg-primary rounded-full w-4 h-4 font-medium text-primary-foreground text-xs">
-                  {unseenMessagesCount}
+              <Avatar
+                className="w-8 h-8"
+                image={friend.image}
+                name={friend.name}
+              />
+              <div>
+                <div className="flex justify-between item-center">
+                  <span className="truncate">{friend.name}</span>
+                  <span
+                    className="text-secondary text-xs leading-loose"
+                    suppressHydrationWarning
+                  >
+                    {new Date().toLocaleTimeString("ru-RU", {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
+                  </span>
                 </div>
-              ) : null}
-            </a>
+                <p className="line-clamp-2 w-full text-secondary text-xs">
+                  Something and so on Lorem ipsum dolor sit amet consectetur
+                  adipisicing elit. Placeat quisquam accusamus illo animi
+                  quaerat atque at ipsum quo nemo deserunt!
+                </p>
+              </div>
+              <div>
+                {unseenMessagesCount > 0 ? (
+                  <div className="flex justify-center items-center bg-primary rounded-full w-4 h-4 font-medium text-primary-foreground text-xs">
+                    {unseenMessagesCount}
+                  </div>
+                ) : null}
+              </div>
+            </SidebarItem>
           </li>
         );
       })}

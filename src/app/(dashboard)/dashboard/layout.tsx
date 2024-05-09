@@ -4,7 +4,7 @@ import Sidebar from "@/components/sidebar/Sidebar";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import SessionProvider from "@/components/SessionProvider";
-import SearchUsersDialog from "@/components/SearchUsersDialog";
+import SearchUsersDialog from "@/components/searchUsers/SearchUsersDialog";
 
 type LayoutProps = PropsWithChildren & {};
 

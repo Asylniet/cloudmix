@@ -15,7 +15,11 @@ type AvatarProps = {
 const Avatar: FC<AvatarProps> = ({ image, name, className }) => {
   return (
     <AvatarWrapper className={className}>
-      <AvatarImage src={image || ""} referrerPolicy="no-referrer" />
+      <AvatarImage
+        src={image || ""}
+        referrerPolicy="no-referrer"
+        alt={`${name}'s profile picture`}
+      />
       <AvatarFallback>{getNameInitials(name)}</AvatarFallback>
     </AvatarWrapper>
   );

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { FC } from "react";
-import ChatHeader from "@/components/ChatHeader";
+import ChatHeader from "@/components/chat/ChatHeader";
 import ChatInput from "@/components/ChatGPTInput";
 import ChatMessages from "./ChatMessages";
 

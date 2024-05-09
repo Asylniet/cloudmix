@@ -6,9 +6,8 @@ import { Button } from "../ui/button";
 import { useFriendRequestsStore } from "@/store/useFriendRequestsStore";
 import Avatar from "../Avatar";
 import { useSearchUsersDialogStore } from "@/store/useSearchUsersDialog";
-import { useMutation } from "@tanstack/react-query";
-import { userAPI } from "@/service/api/user";
-import { toast } from "sonner";
+import { useDenyFriendMutation } from "@/hooks/useDenyFriendMutation";
+import { useAcceptFriendMutation } from "@/hooks/useAcceptFriendMutation";
 
 interface SidebarFriendRequestsProps {}
 
@@ -16,29 +15,10 @@ const SidebarFriendRequests: FC<SidebarFriendRequestsProps> = ({}) => {
   const { setIsOpen } = useSearchUsersDialogStore();
   const { friendRequests, removeFriendRequest } = useFriendRequestsStore();
 
-  const { mutate: accept, isPending: acceptIsPending } = useMutation({
-    mutationKey: ["acceptFriend"],
-    mutationFn: userAPI.acceptFriend,
-    onError: (error) => {
-      toast.error(error.message);
-    },
-    onSuccess: (id) => {
-      toast.success("Friend request accepted");
-      removeFriendRequest(id);
-    },
-  });
-
-  const { mutate: deny, isPending: denyIsPending } = useMutation({
-    mutationKey: ["acceptFriend"],
-    mutationFn: userAPI.denyFriend,
-    onError: (error) => {
-      toast.error(error.message);
-    },
-    onSuccess: (id) => {
-      toast.success("Friend request accepted");
-      removeFriendRequest(id);
-    },
-  });
+  const { mutate: accept, isPending: acceptIsPending } =
+    useAcceptFriendMutation(removeFriendRequest);
+  const { mutate: deny, isPending: denyIsPending } =
+    useDenyFriendMutation(removeFriendRequest);
 
   return (
     <div className="relative">

@@ -1,13 +1,11 @@
 "use client";
 
-import { pusherClient } from "@/lib/pusherClient";
 import { chatHRefConstructor, cn, convertToPusherKey } from "@/lib/utils";
 import { Message, MessageNotification } from "@/lib/validators/message";
 import { User } from "@/lib/validators/user";
 import { usePathname, useRouter } from "next/navigation";
 import { FC, useEffect, useState } from "react";
 import { toast } from "sonner";
-import Image from "next/image";
 import { useSessionContext } from "@/hooks/useSessionContext";
 import { usePusherClientSubscribe } from "@/hooks/usePusherClientSubscribe";
 import Avatar from "../Avatar";
@@ -19,7 +17,6 @@ type SidebarChatListProps = {
 
 const SidebarChatList: FC<SidebarChatListProps> = ({ friends }) => {
   const session = useSessionContext();
-  const router = useRouter();
   const pathname = usePathname();
   const [unseenMessages, setUnseenMessages] = useState<Message[]>([]);
 
@@ -93,7 +90,7 @@ const SidebarChatList: FC<SidebarChatListProps> = ({ friends }) => {
           })}
         >
           <>
-            <Avatar name="GPT-3 " image="/gpt-3.jpg" className="w-8 h-8" />
+            <Avatar name="GPT-3 " image="/gpt-logo.png" className="w-8 h-8" />
             <div>
               <span className="truncate">GPT-3</span>
             </div>

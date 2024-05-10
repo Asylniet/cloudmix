@@ -19,7 +19,7 @@ const Messages: FC<MessagesProps> = ({}) => {
   });
 
   return (
-    <div className="flex flex-col-reverse flex-1 gap-y-0.5 scrollbar-thumb-blue p-3 scrollbar-thumb-rounded scrollbar-w-2 h-full overflow-y-auto scrollbar-track-blue-lighter scrolling-touch">
+    <div className="flex flex-col-reverse flex-1 gap-y-2 sm:gap-y-0.5 scrollbar-thumb-blue p-3 scrollbar-thumb-rounded scrollbar-w-2 h-full overflow-y-auto scrollbar-track-blue-lighter scrolling-touch">
       <div ref={scrollDownRef} />
       {messages.map((message, index) => {
         const hasNextMessageFromSameUser =

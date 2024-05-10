@@ -5,20 +5,30 @@ import { useGetFriendsByUserId } from "@/hooks/useGetFriendsByUserId";
 import SidebarLogo from "./SidebarLogo";
 import SidebarTabs from "./SidebarTabs";
 import { userAPI } from "@/service/api/user";
+import { headers } from "next/headers";
+import { cn } from "@/lib/utils";
 
 type SidebarProps = {
   sessionUser: User;
+  className?: string;
 };
 
-const Sidebar: FC<SidebarProps> = async ({ sessionUser }) => {
+const Sidebar: FC<SidebarProps> = async ({ sessionUser, className }) => {
+  const heads = headers();
+  const pathname = heads.get("next-url");
   const friends = await useGetFriendsByUserId(sessionUser.id);
   const unseenRequests = await userAPI.getIncomingFriendRequests(
     sessionUser.id
   );
   return (
-    <aside className="flex flex-col gap-y-4 bg-background pt-4 border-r w-full max-w-xs h-full overflow-y-auto grow">
+    <aside
+      className={cn(
+        "flex flex-col gap-y-4 bg-background pt-4 border-r w-full sm:max-w-64 lg:max-w-xs h-full overflow-y-auto grow",
+        className
+      )}
+    >
+      {pathname}
       <SidebarLogo />
-
       <nav className="flex flex-col flex-1">
         <ul role="list" className="h-full">
           <SidebarTabs friends={friends} incomingRequests={unseenRequests} />

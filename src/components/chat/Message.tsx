@@ -27,7 +27,7 @@ const Message: FC<MessageProps> = ({
       })}
     >
       <div
-        className={cn("flex flex-col max-w-[45%] mx-2", {
+        className={cn("flex flex-col max-w-[70%] sm:max-w-[45%] mx-2", {
           "order-1 items-end": isCurrentUser,
           "order-2 items-start": !isCurrentUser,
         })}

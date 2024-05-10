@@ -3,6 +3,18 @@ import { User, UserSchema } from "@/lib/validators/user";
 import axios from "axios";
 
 class UserAPI {
+  getUser = async (id: string) => {
+    try {
+      const userRaw = await fetchRedis("get", `user:${id}`);
+      const user = UserSchema.parse(JSON.parse(userRaw));
+      return user;
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new Error(error.message);
+      }
+      throw new Error("Something went wrong");
+    }
+  };
   searchUsers = async (query: string) => {
     const response = await axios.get<User[]>(
       `/api/users/search?query=${query}`

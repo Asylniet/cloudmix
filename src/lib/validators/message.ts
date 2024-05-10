@@ -8,7 +8,7 @@ export const MessageSchema = z.object({
   timestamp: z.number(),
 });
 
-export const MessageArray = z.array(MessageSchema);
+export const MessageArraySchema = z.array(MessageSchema);
 
 export const ChatShema = z.object({
   id: z.string(),
@@ -23,3 +23,18 @@ const MessageNotificationSchema = z.object({
 export type Message = z.infer<typeof MessageSchema>;
 export type MessageNotification = z.infer<typeof MessageNotificationSchema> &
   Message;
+
+export const SendMessageSchema = z.object({
+  id: z.string(),
+  text: z.string(),
+  chatId: z.string(),
+});
+
+export type SendMessage = z.infer<typeof SendMessageSchema>;
+
+export const SaveMessageSchema = z.object({
+  chatId: z.string(),
+  message: MessageSchema,
+});
+
+export type SaveMessage = z.infer<typeof SaveMessageSchema>;

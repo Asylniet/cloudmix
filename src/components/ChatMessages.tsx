@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
 import React, { FC, HTMLAttributes, useContext } from "react";
-import { MessageContext } from "@/context/messages";
+import { MessageContext } from "@/context/ChatContext";
 import MarkdownLite from "./MarkdownLite";
 
 type ChatMessagesProps = HTMLAttributes<HTMLDivElement>;

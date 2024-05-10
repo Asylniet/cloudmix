@@ -1,26 +1,48 @@
 "use client";
 
-import { User } from "@/lib/validators/user";
 import { FC, useRef, useState } from "react";
 import TextareaAutosize from "react-textarea-autosize";
 import { Button } from "../ui/button";
 import { SendHorizonalIcon } from "lucide-react";
 import { useSendMessageMutation } from "@/hooks/useSendMessageMutation";
+import { useChatContext } from "@/hooks/useChatContext";
+import { nanoid } from "nanoid";
+import { useSendGptMessageMutation } from "@/hooks/useSendGptMessageMutation";
+import { useSessionContext } from "@/hooks/useSessionContext";
 
-interface ChatInputProps {
-  chatPartner: User;
-  chatId: string;
-}
+interface ChatInputProps {}
 
-const ChatInput: FC<ChatInputProps> = ({ chatPartner, chatId }) => {
+const ChatInput: FC<ChatInputProps> = ({}) => {
+  const session = useSessionContext();
+  const { chatId, chatPartner, chatType } = useChatContext();
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const [input, setInput] = useState<string>("");
 
-  const { mutate, isPending } = useSendMessageMutation({
-    chatId,
-    onMutate: () => textareaRef.current?.focus(),
-    onSuccess: () => setInput(""),
-  });
+  const { mutate: sendMessage, isPending: isMessagePending } =
+    useSendMessageMutation({
+      chatId,
+      onMutate: () => textareaRef.current?.focus(),
+      onSuccess: () => setInput(""),
+    });
+
+  const { mutate: sendGptMessage, isPending: isGptMessagePending } =
+    useSendGptMessageMutation({
+      user: session.user,
+      setInput,
+      textareaRef,
+    });
+
+  const handleSendMessage = () => {
+    const params = { text: input, chatId, id: nanoid() };
+    if (chatType === "friend") {
+      sendMessage(params);
+    } else {
+      sendGptMessage(params);
+    }
+  };
+
+  const isPending =
+    chatType === "friend" ? isMessagePending : isGptMessagePending;
 
   return (
     <div className="border-accent bg-background border-t">
@@ -30,11 +52,12 @@ const ChatInput: FC<ChatInputProps> = ({ chatPartner, chatId }) => {
           onKeyDown={(e) => {
             if (e.key === "Enter" && !e.shiftKey) {
               e.preventDefault();
-              mutate({ text: input, chatId });
+              handleSendMessage();
             }
           }}
           rows={1}
           maxRows={10}
+          disabled={chatType === "gpt" && isPending}
           value={input}
           autoFocus
           onChange={(e) => setInput(e.target.value)}
@@ -48,7 +71,7 @@ const ChatInput: FC<ChatInputProps> = ({ chatPartner, chatId }) => {
               size="icon"
               isLoading={isPending}
               variant="ghost"
-              onClick={() => mutate({ text: input, chatId })}
+              onClick={() => handleSendMessage()}
               type="submit"
               className="text-secondary"
             >

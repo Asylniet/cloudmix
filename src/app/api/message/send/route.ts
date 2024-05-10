@@ -1,20 +1,20 @@
 import { fetchRedis } from "@/helpers/redis";
 import { authOptions } from "@/lib/auth";
 import { redis } from "@/lib/redis";
-import { Message, MessageSchema } from "@/lib/validators/message";
+import {
+  Message,
+  MessageSchema,
+  SendMessageSchema,
+} from "@/lib/validators/message";
 import { User } from "@/lib/validators/user";
 import { getServerSession } from "next-auth";
-import { nanoid } from "nanoid";
 import { pusherServer } from "@/lib/pusherServer";
 import { convertToPusherKey } from "@/lib/utils";
-import { z } from "zod";
 
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { text, chatId } = z
-      .object({ text: z.string(), chatId: z.string() })
-      .parse(body);
+    const { text, chatId, id } = SendMessageSchema.parse(body);
 
     const session = await getServerSession(authOptions);
     if (!session) return new Response("Unauthorized", { status: 401 });
@@ -44,7 +44,7 @@ export async function POST(req: Request) {
     const sender = JSON.parse(senderString) as User;
 
     const messageData: Message = {
-      id: nanoid(),
+      id,
       senderId: session.user.id,
       receiverId: friendId,
       text,

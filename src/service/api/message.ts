@@ -1,5 +1,10 @@
 import { fetchRedis } from "@/helpers/redis";
-import { Message, MessageArray } from "@/lib/validators/message";
+import {
+  Message,
+  MessageArraySchema,
+  SaveMessage,
+  SendMessage,
+} from "@/lib/validators/message";
 import axios from "axios";
 import { z } from "zod";
 
@@ -18,7 +23,7 @@ class MessageAPI {
 
       const reversedDbMessages = dbMessages.reverse();
 
-      const messages = MessageArray.parse(reversedDbMessages);
+      const messages = MessageArraySchema.parse(reversedDbMessages);
       return messages;
     } catch (error) {
       if (error instanceof z.ZodError) {
@@ -31,9 +36,21 @@ class MessageAPI {
     }
   };
 
-  sendMessage = async (params: { chatId: string; text: string }) => {
+  sendMessage = async (params: SendMessage) => {
     const response = await axios.post("/api/message/send", params);
     return response.data;
+  };
+
+  sendGptMessage = async (params: SendMessage) => {
+    const response = await fetch("/api/message/gpt", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message: params }),
+    });
+
+    if (!response.ok) throw new Error("Failed to send message");
+
+    return response.body;
   };
 }
 

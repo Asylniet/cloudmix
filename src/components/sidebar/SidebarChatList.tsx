@@ -26,7 +26,6 @@ const SidebarChatList: FC<SidebarChatListProps> = ({ friends }) => {
   usePusherClientSubscribe({
     bindKey: "new_message",
     handler: (message: MessageNotification) => {
-      console.log({ message });
       const shouldNotify =
         pathname !==
         `/dashboard/chat/${chatHRefConstructor(
@@ -85,6 +84,22 @@ const SidebarChatList: FC<SidebarChatListProps> = ({ friends }) => {
 
   return (
     <ul role="list" className="overflow-y-auto">
+      <li>
+        <SidebarItem
+          href="/dashboard/chat/gpt"
+          className={cn({
+            "bg-accent": pathname?.includes("gpt"),
+            "hover:bg-accent": !pathname?.includes("gpt"),
+          })}
+        >
+          <>
+            <Avatar name="GPT-3 " image="/gpt-3.jpg" className="w-8 h-8" />
+            <div>
+              <span className="truncate">GPT-3</span>
+            </div>
+          </>
+        </SidebarItem>
+      </li>
       {friends.sort().map((friend) => {
         const unseenMessagesCount = unseenMessages.filter(
           (msg) => msg.senderId === friend.id

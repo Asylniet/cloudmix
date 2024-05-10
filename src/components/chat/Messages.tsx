@@ -1,33 +1,21 @@
 "use client";
 
 import { Message as MessageType } from "@/lib/validators/message";
-import { FC, useRef, useState } from "react";
-import { User } from "@/lib/validators/user";
+import { FC, useRef } from "react";
 import Message from "./Message";
 import { usePusherClientSubscribe } from "@/hooks/usePusherClientSubscribe";
+import { useChatContext } from "@/hooks/useChatContext";
 
-type MessagesProps = {
-  initialMessages: MessageType[];
-  chatId: string;
-  chatPartner: User;
-};
+type MessagesProps = {};
 
-const Messages: FC<MessagesProps> = ({
-  initialMessages,
-  chatId,
-  chatPartner,
-}) => {
-  const [messages, setMessages] = useState<MessageType[]>(initialMessages);
+const Messages: FC<MessagesProps> = ({}) => {
+  const { messages, addMessage, chatId, chatPartner } = useChatContext();
   const scrollDownRef = useRef<HTMLDivElement>(null);
 
   usePusherClientSubscribe({
     subscribeKey: `chat:${chatId}`,
     bindKey: "incoming_message",
-    handler: (message: MessageType) => {
-      setMessages((prev) => {
-        return [message, ...prev];
-      });
-    },
+    handler: (message: MessageType) => addMessage(message),
   });
 
   return (

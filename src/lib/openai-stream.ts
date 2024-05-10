@@ -3,6 +3,10 @@ import {
   type ParsedEvent,
   type ReconnectInterval,
 } from "eventsource-parser";
+import { redis } from "./redis";
+import { Message } from "./validators/message";
+import { chatbot } from "@/helpers/constants/chatbot";
+import { nanoid } from "nanoid";
 
 export type ChatGPTAgent = "user" | "system";
 
@@ -23,11 +27,16 @@ export type OpenAIStreamPayload = {
   n: number;
 };
 
-export async function OpenAIStream(payload: OpenAIStreamPayload) {
+export async function OpenAIStream(
+  payload: OpenAIStreamPayload,
+  chatId: string,
+  userId: string
+) {
   const encoder = new TextEncoder();
   const decoder = new TextDecoder();
 
   let counter = 0;
+  let fullText = "";
 
   const res = await fetch("https://api.openai.com/v1/chat/completions", {
     method: "POST",
@@ -44,17 +53,29 @@ export async function OpenAIStream(payload: OpenAIStreamPayload) {
 
   const stream = new ReadableStream({
     async start(controller) {
-      function onParse(event: ParsedEvent | ReconnectInterval) {
+      async function onParse(event: ParsedEvent | ReconnectInterval) {
         if (event.type === "event") {
           const data = event.data;
           if (data === "[DONE]") {
             controller.close();
+            const message: Message = {
+              id: nanoid(),
+              senderId: chatbot.id,
+              receiverId: userId,
+              text: fullText,
+              timestamp: Date.now(),
+            };
+            await redis.zadd(`chat:${chatId}:messages`, {
+              score: Date.now(),
+              member: JSON.stringify(message),
+            });
             return;
           }
 
           try {
             const json = JSON.parse(data);
             const text = json.choices[0].delta?.content || "";
+            fullText += text;
 
             if (counter < 2 && (text.match(/\\n/) || []).length) return;
 

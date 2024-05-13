@@ -43,6 +43,18 @@ To run the app you will need:
   - PUSHER_APP_SECRET: Token used to authenticate the pusher server
   - NEXT_PUBLIC_PUSHER_APP_CLUSTER: Cluster determines where is the pusher servers will be located. For Kazakhstan better to use ap2(Singapore), the closest option they provide
 
+- Install all dependencies:
+
+```bash
+npm run install
+# or
+yarn install
+# or
+pnpm install
+# or
+bun install
+```
+
 - Then run command to run the development server
 
 ```bash

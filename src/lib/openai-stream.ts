@@ -27,6 +27,15 @@ export type OpenAIStreamPayload = {
   n: number;
 };
 
+/**
+ * Sends a stream of messages to OpenAI's chat API and returns a readable stream of responses.
+ *
+ * @param payload - The payload object containing the message input and other parameters.
+ * @param chatId - The ID of the chat session.
+ * @param userId - The ID of the user initiating the chat.
+ * @returns A readable stream of responses from the OpenAI chat API.
+ * @throws An error if the API response is invalid.
+ */
 export async function OpenAIStream(
   payload: OpenAIStreamPayload,
   chatId: string,
@@ -51,12 +60,16 @@ export async function OpenAIStream(
     throw new Error("Invalid response");
   }
 
+  /**
+   * Represents a readable stream used for parsing and processing data from an OpenAI API response.
+   */
   const stream = new ReadableStream({
     async start(controller) {
       async function onParse(event: ParsedEvent | ReconnectInterval) {
         if (event.type === "event") {
           const data = event.data;
           if (data === "[DONE]") {
+            // Close the stream and save the final message
             controller.close();
             const message: Message = {
               id: nanoid(),
@@ -87,7 +100,11 @@ export async function OpenAIStream(
           }
         }
       }
+
+      // Create a parser to handle parsing the response data
       const parser = createParser(onParse);
+
+      // Iterate over the response body chunks and feed them to the parser
       for await (const chunk of res.body as any) {
         parser.feed(decoder.decode(chunk));
       }

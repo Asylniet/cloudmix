@@ -7,6 +7,13 @@ type PusherClientSubscribeProps = {
   bindKey: string;
   handler: (data: any) => void;
 };
+/**
+ * Subscribes to a Pusher channel and binds an event handler.
+ *
+ * @param subscribeKey - The key of the channel to subscribe to.
+ * @param bindKey - The key of the event to bind the handler to.
+ * @param handler - The event handler function.
+ */
 export const usePusherClientSubscribe = async ({
   subscribeKey,
   bindKey,

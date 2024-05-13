@@ -1,6 +1,13 @@
 import { userAPI } from "@/service/api/user";
 import { notFound } from "next/navigation";
 
+/**
+ * Retrieves the chat partner for a given chat ID and current user ID.
+ * @param chatId - The ID of the chat.
+ * @param currentUserId - The ID of the current user.
+ * @returns A Promise that resolves to the chat partner.
+ * @throws If the current user is not a participant in the chat.
+ */
 export const useGetChatPartner = async (
   chatId: string,
   currentUserId: string

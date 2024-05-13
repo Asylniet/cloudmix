@@ -2,6 +2,13 @@ import { getRedisCredentials } from "./getRedisCredentials";
 
 type Command = "zrange" | "sismember" | "get" | "smembers" | "keys";
 
+/**
+ * Fetches data from Redis using the specified command and arguments.
+ * @param command - The Redis command to execute.
+ * @param args - The arguments to pass to the Redis command.
+ * @returns A Promise that resolves to the result of the Redis command.
+ * @throws An error if the command execution fails.
+ */
 export async function fetchRedis(
   command: Command,
   ...args: (string | number)[]

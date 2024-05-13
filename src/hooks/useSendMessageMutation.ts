@@ -8,6 +8,12 @@ type SendMessageMutationParams = {
   onSuccess: () => void;
 };
 
+/**
+ * Custom hook for sending a message mutation.
+ *
+ * @param params - The parameters for the mutation.
+ * @returns The result of the mutation.
+ */
 export const useSendMessageMutation = (params: SendMessageMutationParams) => {
   return useMutation({
     mutationKey: ["sendMessage", params.chatId],

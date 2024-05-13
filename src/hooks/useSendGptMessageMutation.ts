@@ -13,6 +13,12 @@ type UseSendGptMessageMutationProps = {
   textareaRef: React.RefObject<HTMLTextAreaElement>;
 };
 
+/**
+ * Custom hook for sending GPT messages.
+ *
+ * @param {UseSendGptMessageMutationProps} options - The options for the mutation.
+ * @returns {MutationResult} - The result of the mutation.
+ */
 export const useSendGptMessageMutation = ({
   user,
   setInput,

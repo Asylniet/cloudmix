@@ -5,6 +5,11 @@ import { SearchUser, searchUserSchema } from "@/lib/validators/searchUser";
 
 type FormData = SearchUser;
 
+/**
+ * Custom hook for handling the search users form.
+ *
+ * @returns An object containing the form, debounced query, and setError function.
+ */
 export const useSearchUsersForm = () => {
   const form = useForm<FormData>({
     resolver: zodResolver(searchUserSchema),

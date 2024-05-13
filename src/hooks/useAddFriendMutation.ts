@@ -4,6 +4,13 @@ import { AxiosError } from "axios";
 import { toast } from "sonner";
 import { z } from "zod";
 
+/**
+ * Custom hook for adding a friend.
+ *
+ * @param setError - A function to set the error message.
+ * @param id - The ID of the friend to add.
+ * @returns The result of the mutation.
+ */
 export const useAddFriendMutation = (
   setError: (error: string) => void,
   id: string

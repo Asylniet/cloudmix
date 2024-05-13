@@ -39,24 +39,26 @@ const SidebarFriendRequests: FC<SidebarFriendRequestsProps> = ({}) => {
               name={request.name}
             />
             <p className="font-medium text-lg truncate">{request.name}</p>
-            <Button
-              aria-label="accept friend"
-              size="icon"
-              variant="outline"
-              onClick={() => accept(request.id)}
-              isLoading={acceptIsPending}
-            >
-              <CheckIcon className="w-3/4 h-3/4 font-semibold" />
-            </Button>
-            <Button
-              aria-label="reject friend"
-              variant="ghost"
-              size="icon"
-              onClick={() => deny(request.id)}
-              isLoading={denyIsPending}
-            >
-              <XIcon className="w-3/4 h-3/4 font-semibold" />
-            </Button>
+            <div className="flex items-center gap-2 ml-auto">
+              <Button
+                aria-label="accept friend"
+                size="icon"
+                variant="outline"
+                onClick={() => accept(request.id)}
+                isLoading={acceptIsPending}
+              >
+                <CheckIcon className="w-3/4 h-3/4 font-semibold" />
+              </Button>
+              <Button
+                aria-label="reject friend"
+                variant="ghost"
+                size="icon"
+                onClick={() => deny(request.id)}
+                isLoading={denyIsPending}
+              >
+                <XIcon className="w-3/4 h-3/4 font-semibold" />
+              </Button>
+            </div>
           </div>
         ))
       )}

@@ -42,6 +42,7 @@ const SearchUsersDialog: FC<SearchUsersDialogProps> = ({}) => {
                         {...field}
                         autoComplete="off"
                         placeholder="Search users..."
+                        name="query"
                         onKeyDown={(e) => {
                           if (e.key === "ArrowDown") ref.current?.focus();
                         }}

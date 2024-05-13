@@ -4,9 +4,12 @@ import { AxiosError } from "axios";
 import { toast } from "sonner";
 import { z } from "zod";
 
-export const useAddFriendMutation = (setError: (error: string) => void) => {
+export const useAddFriendMutation = (
+  setError: (error: string) => void,
+  id: string
+) => {
   return useMutation({
-    mutationKey: ["addFriend"],
+    mutationKey: ["addFriend", id],
     mutationFn: userAPI.addFriend,
     onError: (error) => {
       toast.error("Something went wrong");

@@ -1,17 +1,13 @@
-import { useAddFriendMutation } from "@/hooks/useAddFriendMutation";
 import { User } from "@/lib/validators/user";
 import { FC } from "react";
 import {
   Command,
   CommandEmpty,
   CommandGroup,
-  CommandItem,
   CommandList,
 } from "../ui/command";
-import { LoaderCircle, PlusSquareIcon } from "lucide-react";
-import { Button } from "../ui/button";
-import Avatar from "../Avatar";
-import Link from "next/link";
+import { LoaderCircle } from "lucide-react";
+import AddFriendButton from "./AddFriendButton";
 
 type SearchUsersListProps = {
   commandRef: React.RefObject<HTMLDivElement>;
@@ -26,7 +22,6 @@ const SearchUsersList: FC<SearchUsersListProps> = ({
   data,
   setError,
 }) => {
-  const { mutate, isPending } = useAddFriendMutation(setError);
   return (
     <Command ref={commandRef} className="rounded-lg max-h-48 overflow-y-auto">
       <CommandList>
@@ -42,24 +37,7 @@ const SearchUsersList: FC<SearchUsersListProps> = ({
             heading={`Found ${!!data ? data.length : 0} suggestions`}
           >
             {data.map((user) => (
-              <CommandItem key={user.id} className="justify-between gap-2">
-                <Link
-                  href={`/user/${user.id}`}
-                  className="flex items-center gap-2"
-                >
-                  <Avatar name={user.name} image={user.image} />
-                  {user.email}
-                </Link>
-                <Button
-                  onClick={() => mutate(user.id)}
-                  type="button"
-                  size="icon"
-                  variant="outline"
-                  isLoading={isPending}
-                >
-                  <PlusSquareIcon />
-                </Button>
-              </CommandItem>
+              <AddFriendButton key={user.id} setError={setError} user={user} />
             ))}
           </CommandGroup>
         ) : null}

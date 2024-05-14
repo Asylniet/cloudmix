@@ -3,16 +3,17 @@ This is a [Next.js](https://nextjs.org/) project built with Typescript.
 ## About the project
 
 The project is not quite complete
-**Implemented**:
 
+**Implemented**:
 - Realtime chat messaging
 - Requesting and adding users as a friend
 - Talk with ChatGPT
 - Persisting data in DB
 - Auth(made with Google oAuth)
-  **Not implemented**:
+
+**Not implemented**:
 - Proper error handling
-- Chat preview's(they are statis right now, always shows pretermined text, but should show the last message)
+- Chat preview's(they are statis right now, always shows predetermined text, but should show the last message)
 - Seen/unseen messages functionality
 - Searching through messages
 - Grouping messages by dates

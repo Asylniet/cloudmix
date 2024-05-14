@@ -1,4 +1,4 @@
-import { renderHook, act } from "@testing-library/react-hooks";
+import { renderHook, act } from "@testing-library/react";
 import { useFriendRequestsStore } from "@/store/useFriendRequestsStore";
 
 describe("useFriendRequestsStore", () => {
@@ -9,7 +9,12 @@ describe("useFriendRequestsStore", () => {
 
   test("should add a friend request to the friendRequests array", () => {
     const { result } = renderHook(() => useFriendRequestsStore());
-    const request = { id: "1", name: "John Doe" };
+    const request = {
+      id: "1",
+      name: "John Doe",
+      email: "johndoe@test.com",
+      image: "/test-image.png",
+    };
     act(() => {
       result.current.addFriendRequest(request);
     });
@@ -18,8 +23,18 @@ describe("useFriendRequestsStore", () => {
 
   test("should remove a friend request from the friendRequests array", () => {
     const { result } = renderHook(() => useFriendRequestsStore());
-    const request1 = { id: "1", name: "John Doe" };
-    const request2 = { id: "2", name: "Jane Smith" };
+    const request1 = {
+      id: "1",
+      name: "John Doe",
+      email: "johndoe@test.com",
+      image: "/test-image.png",
+    };
+    const request2 = {
+      id: "2",
+      name: "Jane Smith",
+      email: "janesmith@test.com",
+      image: "/test-image.png",
+    };
     act(() => {
       result.current.addFriendRequest(request1);
       result.current.addFriendRequest(request2);
@@ -33,8 +48,18 @@ describe("useFriendRequestsStore", () => {
   test("should set the friendRequests array to the provided array of requests", () => {
     const { result } = renderHook(() => useFriendRequestsStore());
     const requests = [
-      { id: "1", name: "John Doe" },
-      { id: "2", name: "Jane Smith" },
+      {
+        id: "1",
+        name: "John Doe",
+        email: "johndoe@test.com",
+        image: "/test-image.png",
+      },
+      {
+        id: "2",
+        name: "Jane Smith",
+        email: "janesmith@test.com",
+        image: "/test-image.png",
+      },
     ];
     act(() => {
       result.current.setFriendRequests(requests);

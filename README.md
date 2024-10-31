@@ -95,24 +95,3 @@ pnpm start
 # or
 bun start
 ```
-
-## Self reflecting
-
-I know this shouldn't be in README file, but since it is the testing project and I completely failed it with deadlines, I couldn't help but add this section.
-**What went well**:
-
-- Learned a lot by making this project
-- I had experience working with OpenAI API, which I hadn't had before
-- Understood my possibilities and limits
-- I was eager to finish the project and it was really funny to make
-- Really took time, more than 25 hours I guess. This is good, because good things take time
-- This was one of the rare cases when I was sitting whole nights and coding, usually I consider coding as job, this was like a funny quest in a game
-  **What went wrong**:
-- I got sick
-- Since I got sick, I started later, which resulted in deadlines queueing to one tough week
-- I physically didn't manage to finish the project on time
-- I overestimated my possibilities and therfore had some serius consequences
-- As I was going to delve into the project, life opened unexpected side quests and it was extremely hard to handle
-- I lacked communication, again. I had a fear that I missed the deadline, so I will not be considered as candidate anymore
-
-Even though this hesitation, I just continued working on the project, not to submit it to you, but just out of curiosity and even planned to add it as a pet project to my portfolio. Then my friend ecnouraged me to submit the work anyway, so here I am. Thank you in advance!
